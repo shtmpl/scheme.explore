@@ -3,19 +3,19 @@ package scheme.expression;
 import scheme.Environment;
 import scheme.Expression;
 
-public class LiteralNumber implements Expression {
-    private final Number value;
+public class Fractional implements Expression {
+    private final Double value;
 
-    public LiteralNumber(Number value) {
+    public Fractional(Double value) {
         this.value = value;
     }
 
-    public Number value() {
+    public Double value() {
         return value;
     }
 
     @Override
-    public LiteralNumber eval(Environment environment) {
+    public Expression eval(Environment environment) {
         return this;
     }
 

@@ -1,8 +1,6 @@
 package scheme;
 
-import scheme.expression.LiteralNumber;
-import scheme.expression.Symbol;
-import scheme.expression.Unit;
+import scheme.expression.*;
 import scheme.procedure.Primitive;
 import scheme.structure.Pair;
 
@@ -38,133 +36,131 @@ public final class Core {
     });
 
 
-    private static boolean allLiteralNumbers(List<Expression> expressions) {
-        for (Expression expression : expressions) {
-            if (expression instanceof LiteralNumber) {
-                continue;
-            }
-
-            return false;
-        }
-
-        return true;
-    }
-
-    private static Number asNumber(Expression expression) {
-        if (expression instanceof LiteralNumber) {
-            return ((LiteralNumber) expression).value();
+    private static Number unwrapNumber(Expression expression) {
+        if (expression instanceof Integral) {
+            return ((Integral) expression).value();
+        } else if (expression instanceof Fractional) {
+            return ((Fractional) expression).value();
         }
 
         throw new RuntimeException(String.format("Expression is not a number: %s", expression));
     }
 
-    private static List<Number> mapAsNumber(List<Expression> expressions) {
+    private static List<Number> mapUnwrapNumber(List<Expression> expressions) {
         List<Number> result = new ArrayList<>(expressions.size());
         for (Expression expression : expressions) {
-            result.add(asNumber(expression));
+            result.add(unwrapNumber(expression));
         }
 
         return result;
     }
 
 
-    private static Number addNumbers(List<Number> numbers) {
-        double result = 0.;
-        for (Number number : numbers) {
-            result += number.doubleValue();
+    private static Expression addNumbers(List<Expression> expressions) {
+        Number result = 0L;
+        for (Number number : mapUnwrapNumber(expressions)) {
+            if (result instanceof Long && number instanceof Long) {
+                result = result.longValue() + number.longValue();
+            } else {
+                result = result.doubleValue() + number.doubleValue();
+            }
         }
 
-        return result;
+        return result instanceof Long
+                ? new Integral(result.longValue())
+                : new Fractional(result.doubleValue());
     }
 
     public static final Procedure ADD = new Primitive(new Primitive.Implementation() {
         @Override
         public Expression $(Combination arguments) {
-            if (allLiteralNumbers(arguments.expressions())) {
-                return new LiteralNumber(addNumbers(mapAsNumber(arguments.expressions())));
-            }
-
-            throw new RuntimeException(String.format("Invalid argument types: %s", arguments));
+            return addNumbers(arguments.expressions());
         }
     });
 
-    private static Number subtractNumbers(List<Number> numbers) {
-        double result = 0.;
-        for (Number number : numbers) {
-            result -= number.doubleValue();
+    private static Expression subtractNumbers(List<Expression> expressions) {
+        Number result = 0L;
+        for (Number number : mapUnwrapNumber(expressions)) {
+            if (result instanceof Long && number instanceof Long) {
+                result = result.longValue() - number.longValue();
+            } else {
+                result = result.doubleValue() - number.doubleValue();
+            }
         }
 
-        return result;
+        return result instanceof Long
+                ? new Integral(result.longValue())
+                : new Fractional(result.doubleValue());
     }
 
     public static final Procedure SUBTRACT = new Primitive(new Primitive.Implementation() {
         @Override
         public Expression $(Combination arguments) {
-            if (allLiteralNumbers(arguments.expressions())) {
-                return new LiteralNumber(subtractNumbers(mapAsNumber(arguments.expressions())));
-            }
-
-            throw new RuntimeException(String.format("Invalid argument types: %s", arguments));
+            return subtractNumbers(arguments.expressions());
         }
     });
 
-    private static Number multiplyNumbers(List<Number> numbers) {
-        double result = 1.;
-        for (Number number : numbers) {
-            result *= number.doubleValue();
+    private static Expression multiplyNumbers(List<Expression> expressions) {
+        Number result = 1L;
+        for (Number number : mapUnwrapNumber(expressions)) {
+            if (result instanceof Long && number instanceof Long) {
+                result = result.longValue() * number.longValue();
+            } else {
+                result = result.doubleValue() * number.doubleValue();
+            }
         }
 
-        return result;
+        return result instanceof Long
+                ? new Integral(result.longValue())
+                : new Fractional(result.doubleValue());
     }
 
     public static final Procedure MULTIPLY = new Primitive(new Primitive.Implementation() {
         @Override
         public Expression $(Combination arguments) {
-            if (allLiteralNumbers(arguments.expressions())) {
-                return new LiteralNumber(multiplyNumbers(mapAsNumber(arguments.expressions())));
-            }
-
-            throw new RuntimeException(String.format("Invalid argument types: %s", arguments));
+            return multiplyNumbers(arguments.expressions());
         }
     });
 
-    private static Number divideNumbers(List<Number> numbers) {
-        if (numbers.size() < 1) {
-            throw new RuntimeException(String.format("Invalid number of arguments: %s", numbers));
+    private static Expression divideNumbers(List<Expression> expressions) {
+        if (expressions.size() < 1) {
+            throw new RuntimeException("Invalid number of arguments");
         }
 
-        double result = numbers.get(0).doubleValue();
-        for (Number number : numbers.subList(1, numbers.size())) {
-            if (number.doubleValue() == 0.) {
-                throw new RuntimeException(String.format("Division by zero: %s", numbers));
+        Number result = unwrapNumber(expressions.get(0));
+        for (Number number : mapUnwrapNumber(expressions.subList(1, expressions.size()))) {
+            if (number.longValue() == 0L || number.doubleValue() == 0.) {
+                throw new RuntimeException("Division by zero");
             }
 
-            result /= number.doubleValue();
+            result = result.doubleValue() / number.doubleValue();
+//            if (result instanceof Long && number instanceof Long) {
+//                result = result.longValue() / number.longValue();
+//            } else {
+//
+//            }
         }
 
-        return result;
+        return result instanceof Long
+                ? new Integral(result.longValue())
+                : new Fractional(result.doubleValue());
     }
 
     public static final Procedure DIVIDE = new Primitive(new Primitive.Implementation() {
         @Override
         public Expression $(Combination arguments) {
-            if (allLiteralNumbers(arguments.expressions())) {
-                return new LiteralNumber(divideNumbers(mapAsNumber(arguments.expressions())));
-            }
-
-            throw new RuntimeException(String.format("Invalid argument types: %s", arguments));
+            return divideNumbers(arguments.expressions());
         }
     });
+
+    private static Expression sqrt(Expression expression) {
+        return new Fractional(Math.sqrt(unwrapNumber(expression).doubleValue()));
+    }
 
     public static final Procedure SQRT = new Primitive(new Primitive.Implementation() {
         @Override
         public Expression $(Combination arguments) {
-            if (allLiteralNumbers(arguments.expressions())) {
-                LiteralNumber x = (LiteralNumber) arguments.expressions().get(0);
-                return new LiteralNumber(Math.sqrt(x.value().doubleValue()));
-            }
-
-            throw new RuntimeException(String.format("Invalid argument types: %s", arguments));
+            return sqrt(arguments.expressions().get(0));
         }
     });
 

@@ -48,7 +48,7 @@ public class Lexer implements Iterable<String> {
 
         int x;
         while ((x = input.read()) != -1) {
-            if (Character.isDigit(x)) {
+            if (Character.isDigit(x) || '.' == x) {
                 result.append((char) x);
                 continue;
             }
@@ -65,14 +65,14 @@ public class Lexer implements Iterable<String> {
 
         int x;
         if ((x = input.read()) != -1) {
-            if (x == '"') {
+            if ('"' == x) {
                 result.append((char) x);
             } else {
                 input.unread(x);
                 return "";
             }
 
-            while ((x = input.read()) != -1 && x != '"') {
+            while ((x = input.read()) != -1 && '"' != x) {
                 result.append((char) x);
             }
 

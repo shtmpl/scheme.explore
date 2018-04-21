@@ -3,10 +3,10 @@ package scheme.expression;
 import scheme.Environment;
 import scheme.Expression;
 
-public class LiteralString implements Expression {
+public class Text implements Expression {
     private final String value;
 
-    public LiteralString(String value) {
+    public Text(String value) {
         this.value = value;
     }
 

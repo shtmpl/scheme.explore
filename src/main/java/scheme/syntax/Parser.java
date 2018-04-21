@@ -15,48 +15,52 @@ public class Parser implements Iterable<Expression> {
         return Double.valueOf(string);
     }
 
-    private static void requireNext(PushbackIterator<String> it, String required) {
-        if (it.hasNext()) {
-            String x = it.next();
-
-            if (required.equals(x)) {
-                return;
-            }
-
-            throw new RuntimeException(String.format("Unexpected: `%s`", x));
+    private static String requireNext(Iterator<String> it) {
+        if (!it.hasNext()) {
+            throw new RuntimeException(String.format("Unexpected: `%s`", "EOF"));
         }
 
-        throw new RuntimeException(String.format("Unexpected: `%s`", "EOF"));
+        return it.next();
     }
 
-    private static boolean lookup(PushbackIterator<String> it, String expected) {
-        if (it.hasNext()) {
-            String x = it.next();
+    private static String requireNext(Iterator<String> it, String required) {
+        if (!it.hasNext()) {
+            throw new RuntimeException(String.format("Unexpected: `%s`", "EOF"));
+        }
 
-            if (expected.equals(x)) {
-                it.stash(x);
-                return true;
-            }
+        String x = it.next();
 
+        if (required.equals(x)) {
+            return x;
+        }
+
+        throw new RuntimeException(String.format("Unexpected: `%s`", x));
+    }
+
+
+    private static final Pattern PATTERN_FRACTIONAL = Pattern.compile("(\\d+\\.|\\.\\d+|\\d+\\.\\d+)");
+
+    private static Expression parseFractional(PushbackIterator<String> it) {
+        String x = requireNext(it);
+
+        if (PATTERN_FRACTIONAL.matcher(x).matches()) {
+            return new Fractional(Double.valueOf(x));
+        } else {
             it.stash(x);
-            return false;
         }
 
-        throw new RuntimeException(String.format("Unexpected: `%s`", "EOF"));
+        return null;
     }
 
+    private static final Pattern PATTERN_INTEGRAL = Pattern.compile("\\d+");
 
-    private static final Pattern PATTERN_NUMBER = Pattern.compile("\\d+");
+    private static Expression parseIntegral(PushbackIterator<String> it) {
+        String x = requireNext(it);
 
-    private static Expression parseNumber(PushbackIterator<String> it) {
-        if (it.hasNext()) {
-            String x = it.next();
-
-            if (PATTERN_NUMBER.matcher(x).matches()) {
-                return new LiteralNumber(numberValueOf(x));
-            } else {
-                it.stash(x);
-            }
+        if (PATTERN_INTEGRAL.matcher(x).matches()) {
+            return new Integral(Long.valueOf(x));
+        } else {
+            it.stash(x);
         }
 
         return null;
@@ -64,12 +68,12 @@ public class Parser implements Iterable<Expression> {
 
     private static final Pattern PATTERN_STRING = Pattern.compile("\".*\"", Pattern.DOTALL);
 
-    private static Expression parseString(PushbackIterator<String> it) {
+    private static Expression parseText(PushbackIterator<String> it) {
         if (it.hasNext()) {
             String x = it.next();
 
             if (PATTERN_STRING.matcher(x).matches()) {
-                return new LiteralString(Strings.trimAffix(x, "\""));
+                return new Text(Strings.trimAffix(x, "\""));
             } else {
                 it.stash(x);
             }
@@ -285,12 +289,19 @@ public class Parser implements Iterable<Expression> {
             return null;
         }
 
-        Expression result = parseNumber(it);
+        Expression result;
+
+        result = parseFractional(it);
         if (result != null) {
             return result;
         }
 
-        result = parseString(it);
+        result = parseIntegral(it);
+        if (result != null) {
+            return result;
+        }
+
+        result = parseText(it);
         if (result != null) {
             return result;
         }

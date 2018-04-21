@@ -6,9 +6,7 @@ import scheme.Expression;
 import scheme.Strings;
 import scheme.expression.*;
 
-import java.util.AbstractMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 
@@ -17,11 +15,11 @@ public class Parser implements Iterable<Expression> {
         return Double.valueOf(string);
     }
 
-    private static void guard(PushbackIterator<String> it, String expected) {
+    private static void requireNext(PushbackIterator<String> it, String required) {
         if (it.hasNext()) {
             String x = it.next();
 
-            if (expected.equals(x)) {
+            if (required.equals(x)) {
                 return;
             }
 
@@ -64,7 +62,7 @@ public class Parser implements Iterable<Expression> {
         return null;
     }
 
-    private static final Pattern PATTERN_STRING = Pattern.compile("\".*\"");
+    private static final Pattern PATTERN_STRING = Pattern.compile("\".*\"", Pattern.DOTALL);
 
     private static Expression parseString(PushbackIterator<String> it) {
         if (it.hasNext()) {
@@ -207,30 +205,6 @@ public class Parser implements Iterable<Expression> {
         }
     }
 
-    private static Map.Entry<Symbol, Expression> parseLetBinding(PushbackIterator<String> it) {
-        AbstractMap.SimpleEntry<Symbol, Expression> result = null;
-        if (it.hasNext()) {
-            String x = it.next();
-
-            if ("(".equals(x)) {
-                Symbol variable = (Symbol) parseSymbol(it);
-                Expression value = parseExpression(it);
-
-                result = new AbstractMap.SimpleEntry<>(variable, value);
-            }
-
-            if (it.hasNext()) {
-                x = it.next();
-
-                if (")".equals(x)) {
-                    return result;
-                }
-            }
-        }
-
-        throw new RuntimeException("Something bad happened in let binding");
-    }
-
     private static Expression parseIf(PushbackIterator<String> it) {
         If.Builder result = new If.Builder();
 
@@ -262,39 +236,8 @@ public class Parser implements Iterable<Expression> {
         }
     }
 
-//    private static Expression parseApplication(PushbackIterator<String> it) {
-//        ApplicationExpression.Builder result = new ApplicationExpression.Builder();
-//
-//        Expression expression = parseExpression(it);
-//        if (expression != null) {
-//            result.operator(expression);
-//        } else {
-//            throw new RuntimeException(String.format("Unknown identifier"));
-//        }
-//
-//        while (it.hasNext()) {
-//            String x = it.next();
-//
-//            if (")".equals(x)) {
-//                return result.build();
-//            } else {
-//                it.stash(x);
-//                result.operand(parseExpression(it));
-//            }
-//        }
-//
-//        throw new RuntimeException("Unexpected EOF");
-//    }
-
     private static Expression parseApplication(PushbackIterator<String> it) {
         Combination.Builder result = new Combination.Builder();
-
-//        Expression expression = parseExpression(it);
-//        if (expression != null) {
-//            result.operator(expression);
-//        } else {
-//            throw new RuntimeException(String.format("Unknown identifier"));
-//        }
 
         while (it.hasNext()) {
             String x = it.next();
@@ -311,7 +254,7 @@ public class Parser implements Iterable<Expression> {
     }
 
     private static Expression parseCombination(PushbackIterator<String> it) {
-        guard(it, "(");
+        requireNext(it, "(");
 
         if (it.hasNext()) {
             String f = it.next();
@@ -326,8 +269,6 @@ public class Parser implements Iterable<Expression> {
                     return parseDefinition(it);
                 case "set!":
                     return parseAssignment(it);
-//                        case "let":
-//                            return parseLet(it);
                 case "if":
                     return parseIf(it);
                 default:
@@ -340,6 +281,10 @@ public class Parser implements Iterable<Expression> {
     }
 
     private static Expression parseExpression(PushbackIterator<String> it) {
+        if (!it.hasNext()) {
+            return null;
+        }
+
         Expression result = parseNumber(it);
         if (result != null) {
             return result;
@@ -365,13 +310,13 @@ public class Parser implements Iterable<Expression> {
             return result;
         }
 
-        return null;
+        throw new RuntimeException(String.format("Unexpected: `%s`", "EOF"));
     }
 
     private final Iterable<String> lexemes;
 
     public Parser(Iterable<String> lexemes) {
-        this.lexemes = lexemes;//new PushbackIterator<>(lexemes.iterator());
+        this.lexemes = lexemes;
     }
 
     private Expression nextExpression(PushbackIterator<String> it) {

@@ -18,7 +18,7 @@ public final class Core {
     public static final Procedure IS_NULL = new Primitive(new Primitive.Implementation() {
         @Override
         public Expression $(Combination arguments) {
-            if (UNIT.equals(arguments.expressions().get(0))) {
+            if (Utilities.isNull(arguments.expressions().get(0))) {
                 return TRUE;
             }
 
@@ -200,7 +200,7 @@ public final class Core {
     public static final Procedure IS_PAIR = new Primitive(new Primitive.Implementation() {
         @Override
         public Expression $(Combination arguments) {
-            if (arguments.expressions().get(0) instanceof Pair) {
+            if (Utilities.isPair(arguments.expressions().get(0))) {
                 return TRUE;
             }
 

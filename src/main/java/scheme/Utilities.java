@@ -1,5 +1,7 @@
 package scheme;
 
+import scheme.structure.Pair;
+
 public final class Utilities {
     public static Procedure downcastToProcedure(Expression expression) {
         if (expression instanceof Procedure) {
@@ -15,5 +17,13 @@ public final class Utilities {
 
     public static boolean isTrue(Expression expression) {
         return !isFalse(expression);
+    }
+
+    public static boolean isNull(Expression expression) {
+        return Core.UNIT.equals(expression);
+    }
+
+    public static boolean isPair(Expression expression) {
+        return expression instanceof Pair;
     }
 }

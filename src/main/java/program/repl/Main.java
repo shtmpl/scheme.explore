@@ -1,5 +1,9 @@
-package scheme;
+package program.repl;
 
+import scheme.Core;
+import scheme.DefaultEnvironment;
+import scheme.Environment;
+import scheme.Expression;
 import scheme.expression.Symbol;
 import scheme.syntax.Lexer;
 import scheme.syntax.Parser;

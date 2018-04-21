@@ -240,6 +240,22 @@ public class Parser implements Iterable<Expression> {
         }
     }
 
+    private static Expression parseBegin(PushbackIterator<String> it) {
+        Begin.Builder result = new Begin.Builder();
+
+        String x = requireNext(it);
+        if (")".equals(x)) {
+            throw new RuntimeException(String.format("%s must contain at least %d item(s)", "(begin ...)", 1));
+        }
+
+        do {
+            it.stash(x);
+            result.expression(parseExpression(it));
+        } while (!")".equals((x = requireNext(it))));
+
+        return result.build();
+    }
+
     private static Expression parseApplication(PushbackIterator<String> it) {
         Combination.Builder result = new Combination.Builder();
 
@@ -275,6 +291,8 @@ public class Parser implements Iterable<Expression> {
                     return parseAssignment(it);
                 case "if":
                     return parseIf(it);
+                case "begin":
+                    return parseBegin(it);
                 default:
                     it.stash(f);
                     return parseApplication(it);

@@ -25,6 +25,34 @@ public final class Core {
     });
 
 
+    private static String toStringUnquoted(Expression expression) {
+        if (expression instanceof Text) {
+            return ((Text) expression).value();
+        }
+
+        return expression.toString();
+    }
+
+    private static Expression error(List<Expression> expressions) {
+        StringBuilder result = new StringBuilder("Error: ");
+
+        String delimiter = "";
+        for (Expression expression : expressions) {
+            result.append(delimiter).append(toStringUnquoted(expression));
+            delimiter = " ";
+        }
+
+        throw new RuntimeException(result.toString());
+    }
+
+    public static final Procedure ERROR = new Primitive(new Primitive.Implementation() {
+        @Override
+        public Expression $(Combination arguments) {
+            return error(arguments.expressions());
+        }
+    });
+
+
     public static final Procedure APPLY = new Primitive(new Primitive.Implementation() {
         @Override
         public Expression $(Combination arguments) {
@@ -201,6 +229,23 @@ public final class Core {
             }
 
             return FALSE;
+        }
+    });
+
+
+    public static final Procedure DISPLAY = new Primitive(new Primitive.Implementation() {
+        @Override
+        public Expression $(Combination arguments) {
+            System.out.print(toStringUnquoted(arguments.expressions().get(0)));
+            return UNIT;
+        }
+    });
+
+    public static final Procedure NEWLINE = new Primitive(new Primitive.Implementation() {
+        @Override
+        public Expression $(Combination arguments) {
+            System.out.println();
+            return UNIT;
         }
     });
 

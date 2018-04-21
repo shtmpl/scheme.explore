@@ -2,6 +2,9 @@ package scheme;
 
 import scheme.structure.Pair;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class Utilities {
     public static Procedure downcastToProcedure(Expression expression) {
         if (expression instanceof Procedure) {
@@ -25,5 +28,14 @@ public final class Utilities {
 
     public static boolean isPair(Expression expression) {
         return expression instanceof Pair;
+    }
+
+    public static List<Expression> mapEval(List<Expression> expressions, Environment environment) {
+        List<Expression> result = new ArrayList<>(expressions.size());
+        for (Expression expression : expressions) {
+            result.add(expression.eval(environment));
+        }
+
+        return result;
     }
 }

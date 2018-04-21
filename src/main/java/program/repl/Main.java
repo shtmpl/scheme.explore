@@ -26,6 +26,8 @@ public final class Main {
         PRIMITIVES.put(new Symbol("true"), Core.TRUE);
         PRIMITIVES.put(new Symbol("false"), Core.FALSE);
 
+        PRIMITIVES.put(new Symbol("error"), Core.ERROR);
+
         PRIMITIVES.put(new Symbol("apply"), Core.APPLY);
 
         PRIMITIVES.put(new Symbol("cons"), Core.CONS);
@@ -39,10 +41,12 @@ public final class Main {
         PRIMITIVES.put(new Symbol("/"), Core.DIVIDE);
 
         PRIMITIVES.put(new Symbol("sqrt"), Core.SQRT);
+
+        PRIMITIVES.put(new Symbol("display"), Core.DISPLAY);
+        PRIMITIVES.put(new Symbol("newline"), Core.NEWLINE);
     }
 
-    private static final Environment ENVIRONMENT_GLOBAL =
-            new DefaultEnvironment(Environment.EMPTY, PRIMITIVES);
+    private static final Environment ENVIRONMENT_GLOBAL = new DefaultEnvironment(Environment.EMPTY, PRIMITIVES);
 
 
     private static final String PROMPT_IN = "λ> ";

@@ -17,10 +17,17 @@ public final class Main {
     private static final Map<Symbol, Expression> PRIMITIVES = new HashMap<>();
 
     static {
+        PRIMITIVES.put(new Symbol("null?"), Core.IS_NULL);
+
         PRIMITIVES.put(new Symbol("true"), Core.TRUE);
         PRIMITIVES.put(new Symbol("false"), Core.FALSE);
 
         PRIMITIVES.put(new Symbol("apply"), Core.APPLY);
+
+        PRIMITIVES.put(new Symbol("cons"), Core.CONS);
+        PRIMITIVES.put(new Symbol("car"), Core.CAR);
+        PRIMITIVES.put(new Symbol("cdr"), Core.CDR);
+        PRIMITIVES.put(new Symbol("pair?"), Core.IS_PAIR);
 
         PRIMITIVES.put(new Symbol("+"), Core.ADD);
         PRIMITIVES.put(new Symbol("-"), Core.SUBTRACT);

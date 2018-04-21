@@ -4,6 +4,7 @@ import scheme.expression.LiteralNumber;
 import scheme.expression.Symbol;
 import scheme.expression.Unit;
 import scheme.procedure.Primitive;
+import scheme.structure.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,17 @@ public final class Core {
 
     public static final Expression FALSE = new Symbol("false");
     public static final Expression TRUE = new Symbol("true");
+
+    public static final Procedure IS_NULL = new Primitive(new Primitive.Implementation() {
+        @Override
+        public Expression $(Combination arguments) {
+            if (UNIT.equals(arguments.expressions().get(0))) {
+                return TRUE;
+            }
+
+            return FALSE;
+        }
+    });
 
 
     public static final Procedure APPLY = new Primitive(new Primitive.Implementation() {
@@ -38,14 +50,23 @@ public final class Core {
         return true;
     }
 
-    private static List<Number> asNumbers(List<Expression> expressions) {
+    private static Number asNumber(Expression expression) {
+        if (expression instanceof LiteralNumber) {
+            return ((LiteralNumber) expression).value();
+        }
+
+        throw new RuntimeException(String.format("Expression is not a number: %s", expression));
+    }
+
+    private static List<Number> mapAsNumber(List<Expression> expressions) {
         List<Number> result = new ArrayList<>(expressions.size());
         for (Expression expression : expressions) {
-            result.add(((LiteralNumber) expression).value());
+            result.add(asNumber(expression));
         }
 
         return result;
     }
+
 
     private static Number addNumbers(List<Number> numbers) {
         double result = 0.;
@@ -60,7 +81,7 @@ public final class Core {
         @Override
         public Expression $(Combination arguments) {
             if (allLiteralNumbers(arguments.expressions())) {
-                return new LiteralNumber(addNumbers(asNumbers(arguments.expressions())));
+                return new LiteralNumber(addNumbers(mapAsNumber(arguments.expressions())));
             }
 
             throw new RuntimeException(String.format("Invalid argument types: %s", arguments));
@@ -80,7 +101,7 @@ public final class Core {
         @Override
         public Expression $(Combination arguments) {
             if (allLiteralNumbers(arguments.expressions())) {
-                return new LiteralNumber(subtractNumbers(asNumbers(arguments.expressions())));
+                return new LiteralNumber(subtractNumbers(mapAsNumber(arguments.expressions())));
             }
 
             throw new RuntimeException(String.format("Invalid argument types: %s", arguments));
@@ -100,7 +121,7 @@ public final class Core {
         @Override
         public Expression $(Combination arguments) {
             if (allLiteralNumbers(arguments.expressions())) {
-                return new LiteralNumber(multiplyNumbers(asNumbers(arguments.expressions())));
+                return new LiteralNumber(multiplyNumbers(mapAsNumber(arguments.expressions())));
             }
 
             throw new RuntimeException(String.format("Invalid argument types: %s", arguments));
@@ -128,7 +149,7 @@ public final class Core {
         @Override
         public Expression $(Combination arguments) {
             if (allLiteralNumbers(arguments.expressions())) {
-                return new LiteralNumber(divideNumbers(asNumbers(arguments.expressions())));
+                return new LiteralNumber(divideNumbers(mapAsNumber(arguments.expressions())));
             }
 
             throw new RuntimeException(String.format("Invalid argument types: %s", arguments));
@@ -144,6 +165,46 @@ public final class Core {
             }
 
             throw new RuntimeException(String.format("Invalid argument types: %s", arguments));
+        }
+    });
+
+
+    public static final Procedure CONS = new Primitive(new Primitive.Implementation() {
+        @Override
+        public Expression $(Combination arguments) {
+            Expression car = arguments.expressions().get(0);
+            Expression cdr = arguments.expressions().get(1);
+
+            return new Pair(car, cdr);
+        }
+    });
+
+    public static final Procedure CAR = new Primitive(new Primitive.Implementation() {
+        @Override
+        public Expression $(Combination arguments) {
+            Pair pair = (Pair) arguments.expressions().get(0);
+
+            return pair.car();
+        }
+    });
+
+    public static final Procedure CDR = new Primitive(new Primitive.Implementation() {
+        @Override
+        public Expression $(Combination arguments) {
+            Pair pair = (Pair) arguments.expressions().get(0);
+
+            return pair.cdr();
+        }
+    });
+
+    public static final Procedure IS_PAIR = new Primitive(new Primitive.Implementation() {
+        @Override
+        public Expression $(Combination arguments) {
+            if (arguments.expressions().get(0) instanceof Pair) {
+                return TRUE;
+            }
+
+            return FALSE;
         }
     });
 

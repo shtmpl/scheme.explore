@@ -21,20 +21,21 @@ public final class Main {
     private static final String PROMPT_OUT = "=> ";
     private static final String PROMPT_ERR = "~> ";
 
+    private static BufferedReader createBufferedStdinReader() {
+        return new BufferedReader(new InputStreamReader(System.in));
+    }
+
     public static void main(String... args) {
-        try (PushbackReader reader =
-                     new PushbackReader(
-                             new BufferedReader(
-                                     new InputStreamReader(System.in)), MAX_IDENTIFIER_LENGTH)) {
+        try (PushbackReader reader = new PushbackReader(createBufferedStdinReader(), MAX_IDENTIFIER_LENGTH)) {
             System.out.print(PROMPT_IN);
             for (Expression expression : new Parser(new Lexer(reader))) {
                 try {
                     Expression evaluated = expression.eval(ENVIRONMENT_GLOBAL);
                     if (Utilities.isNull(evaluated)) {
-                        continue;
+                        /*NOP*/
+                    } else {
+                        System.out.printf("%s%s%n", PROMPT_OUT, evaluated);
                     }
-
-                    System.out.printf("%s%s%n", PROMPT_OUT, evaluated);
                 } catch (RuntimeException exception) {
                     System.out.printf("%s%s%n", PROMPT_ERR, exception.getMessage());
                 }

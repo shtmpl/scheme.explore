@@ -21,17 +21,21 @@ public final class Main {
 
     private static final int MAX_IDENTIFIER_LENGTH = 1024;
 
+    private static BufferedReader createBufferedFileReader(String path) {
+        try {
+            return Files.newBufferedReader(Paths.get(path), StandardCharsets.UTF_8);
+        } catch (IOException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
+
     public static void main(String... args) {
         if (args.length < 1) {
             System.err.println("File path should be specified");
             System.exit(1);
         }
 
-        Path path = Paths.get(args[0]);
-
-        try (PushbackReader reader =
-                     new PushbackReader(
-                             Files.newBufferedReader(path, StandardCharsets.UTF_8), MAX_IDENTIFIER_LENGTH)) {
+        try (PushbackReader reader = new PushbackReader(createBufferedFileReader(args[0]), MAX_IDENTIFIER_LENGTH)) {
             for (Expression expression : new Parser(new Lexer(reader))) {
                 try {
                     Expression evaluated = expression.eval(ENVIRONMENT_GLOBAL);

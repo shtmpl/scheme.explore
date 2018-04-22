@@ -165,6 +165,14 @@ public class Parser implements Iterable<Expression> {
         throw new RuntimeException("Unexpected EOF");
     }
 
+    private static Expression parseDefinitionVariable(PushbackIterator<String> it) {
+        return null;
+    }
+
+    private static Expression parseDefinitionProcedure(PushbackIterator<String> it) {
+        return null;
+    }
+
     private static Expression parseDefinition(PushbackIterator<String> it) {
         Definition.Builder result = new Definition.Builder();
 
@@ -259,18 +267,13 @@ public class Parser implements Iterable<Expression> {
     private static Expression parseApplication(PushbackIterator<String> it) {
         Combination.Builder result = new Combination.Builder();
 
-        while (it.hasNext()) {
-            String x = it.next();
+        String x = requireNext(it);
+        do {
+            it.stash(x);
+            result.expression(parseExpression(it));
+        } while (!")".equals((x = requireNext(it))));
 
-            if (")".equals(x)) {
-                return result.build();
-            } else {
-                it.stash(x);
-                result.expression(parseExpression(it));
-            }
-        }
-
-        throw new RuntimeException("Unexpected EOF");
+        return result.build();
     }
 
     private static Expression parseCombination(PushbackIterator<String> it) {

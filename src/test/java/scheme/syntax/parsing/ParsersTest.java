@@ -125,6 +125,11 @@ public class ParsersTest {
                         Parsers.character('x')).apply(""),
                 "",
                 null);
+        assertSuccess(
+                Parsers.optional(
+                        Parsers.character('x')).apply("x"),
+                "",
+                'x');
     }
 
     @Test

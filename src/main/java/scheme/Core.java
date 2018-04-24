@@ -185,8 +185,17 @@ public final class Core {
             (CombinationExpression arguments) -> addNumbers(arguments.expressions()));
 
     private static Expression subtractNumbers(List<Expression> expressions) {
-        Number result = 0L;
-        for (Number number : mapUnwrapNumber(expressions)) {
+        if (expressions.size() < 1) {
+            throw new RuntimeException("Invalid number of arguments");
+        } else if (expressions.size() == 1) {
+            Number result = unwrapNumber(expressions.get(0));
+            return result instanceof Long
+                    ? IntegralExpression.make(-result.longValue())
+                    : FractionalExpression.make(-result.doubleValue());
+        }
+
+        Number result = unwrapNumber(expressions.get(0));
+        for (Number number : mapUnwrapNumber(expressions.subList(1, expressions.size()))) {
             if (result instanceof Long && number instanceof Long) {
                 result = result.longValue() - number.longValue();
             } else {

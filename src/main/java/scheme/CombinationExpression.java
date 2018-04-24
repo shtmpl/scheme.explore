@@ -1,5 +1,6 @@
 package scheme;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,13 +23,13 @@ public class CombinationExpression implements Expression {
     @Override
     public Expression eval(Environment environment) {
         Procedure operator = Utilities.asProcedure(expressions.get(0).eval(environment));
-        CombinationExpression operands = CombinationExpression.make(expressions
-                .stream()
-                .skip(1)
-                .map((Expression expression) -> expression.eval(environment))
-                .collect(Collectors.toList()));
 
-        return operator.apply(operands);
+        List<Expression> evaluated = new ArrayList<>();
+        for (Expression expression : expressions.subList(1, expressions.size())) {
+            evaluated.add(expression.eval(environment));
+        }
+
+        return operator.apply(CombinationExpression.make(evaluated));
     }
 
     @Override

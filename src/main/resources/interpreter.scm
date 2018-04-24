@@ -1,7 +1,6 @@
-(define distance
-  (lambda (x y)
-    (sqrt (+ (* x x) (* y y)))))
+(define (factorial x)
+  (if (< x 1)
+      1
+      (* x (factorial (- x 1)))))
 
-(display "Distance: ")
-(display (distance 3 4))
-(newline)
+(factorial 4)

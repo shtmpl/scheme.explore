@@ -23,6 +23,14 @@ public class DefaultEnvironment implements Environment {
         PRIMITIVES.put(SymbolExpression.make("cdr"), Core.CDR);
         PRIMITIVES.put(SymbolExpression.make("pair?"), Core.IS_PAIR);
 
+        PRIMITIVES.put(SymbolExpression.make("eq?"), Core.IS_EQ);
+
+        PRIMITIVES.put(SymbolExpression.make("<"), Core.LESS_THAN);
+        PRIMITIVES.put(SymbolExpression.make("<="), Core.LESS_THAN_OR_EQUAL_TO);
+        PRIMITIVES.put(SymbolExpression.make("="), Core.EQUAL_TO);
+        PRIMITIVES.put(SymbolExpression.make(">="), Core.GREATER_THAN_OR_EQUAL_TO);
+        PRIMITIVES.put(SymbolExpression.make(">"), Core.GREATER_THAN);
+
         PRIMITIVES.put(SymbolExpression.make("+"), Core.ADD);
         PRIMITIVES.put(SymbolExpression.make("-"), Core.SUBTRACT);
         PRIMITIVES.put(SymbolExpression.make("*"), Core.MULTIPLY);

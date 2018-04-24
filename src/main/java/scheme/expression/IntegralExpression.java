@@ -4,9 +4,14 @@ import scheme.Environment;
 import scheme.Expression;
 
 public class IntegralExpression implements Expression {
+    public static IntegralExpression make(Long value) {
+        return new IntegralExpression(value);
+    }
+
+
     private final Long value;
 
-    public IntegralExpression(Long value) {
+    private IntegralExpression(Long value) {
         this.value = value;
     }
 

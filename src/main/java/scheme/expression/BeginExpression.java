@@ -9,24 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BeginExpression implements Expression {
-    public static class Builder {
-        private List<Expression> expressions = new ArrayList<>();
-
-        public Builder expression(Expression expression) {
-            expressions.add(expression);
-            return this;
-        }
-
-        public BeginExpression build() {
-            return new BeginExpression(this);
-        }
+    public static BeginExpression make(List<Expression> expressions) {
+        return new BeginExpression(expressions);
     }
 
 
     private final List<Expression> expressions;
 
-    private BeginExpression(Builder builder) {
-        this.expressions = builder.expressions;
+    private BeginExpression(List<Expression> expressions) {
+        this.expressions = expressions;
     }
 
     @Override

@@ -5,9 +5,26 @@ import scheme.structure.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class Utilities {
-    public static Procedure downcastToProcedure(Expression expression) {
+    public static SymbolExpression asSymbolExpression(Expression expression) {
+        if (expression instanceof SymbolExpression) {
+            return (SymbolExpression) expression;
+        }
+
+        throw new RuntimeException(String.format("Not a symbol: %s", expression));
+    }
+
+    public static CombinationExpression asCombinationExpression(Expression expression) {
+        if (expression instanceof CombinationExpression) {
+            return (CombinationExpression) expression;
+        }
+
+        throw new RuntimeException(String.format("Not a combination: %s", expression));
+    }
+
+    public static Procedure asProcedure(Expression expression) {
         if (expression instanceof Procedure) {
             return (Procedure) expression;
         }
@@ -41,105 +58,75 @@ public final class Utilities {
     }
 
 
-    public static Expression newIntegralExpression(String x) {
-        return new IntegralExpression(Long.valueOf(x));
+    public static Expression makeUnitExpression(String x) {
+        return UnitExpression.make();
     }
 
-    public static Expression newFractionalExpression(String x) {
-        return new FractionalExpression(Double.valueOf(x));
+    public static Expression makeIntegralExpression(String x) {
+        return IntegralExpression.make(Long.valueOf(x));
     }
 
-    public static Expression newStringExpression(String x) {
-        return new StringExpression(x);
+    public static Expression makeFractionalExpression(String x) {
+        return FractionalExpression.make(Double.valueOf(x));
     }
 
-    public static Expression newSymbolExpression(String x) {
-        return new SymbolExpression(x);
+    public static Expression makeStringExpression(String x) {
+        return StringExpression.make(x);
     }
 
-    public static Expression newUnitExpression(String x) {
-        return Core.UNIT;
+    public static Expression makeSymbolExpression(String x) {
+        return SymbolExpression.make(x);
     }
 
-    public static Expression newCombinationExpression(List<Expression> expressions) {
-        CombinationExpression.Builder result = new CombinationExpression.Builder();
-        for (Expression expression : expressions) {
-            result.expression(expression);
-        }
-
-        return result.build();
+    public static Expression makeCombinationExpression(List<Expression> expressions) {
+        return CombinationExpression.make(expressions);
     }
 
-    public static Expression newQuoteExpression(Expression expression) {
-        return new QuoteExpression(expression);
+    public static Expression makeQuoteExpression(Expression expression) {
+        return QuoteExpression.make(expression);
     }
 
-    public static Expression newLambdaExpression(List<Expression> expressions) {
-        LambdaExpression.Builder result = new LambdaExpression.Builder();
-
-        for (Expression expression : ((CombinationExpression) expressions.get(0)).expressions()) {
-            result.parameter((SymbolExpression) expression);
-        }
-
-        for (Expression expression : ((CombinationExpression) expressions.get(1)).expressions()) {
-            result.expression(expression);
-        }
-
-        return result.build();
+    public static Expression makeLambdaExpression(List<Expression> expressions) {
+        return LambdaExpression.make(
+                asCombinationExpression(expressions.get(0))
+                        .expressions()
+                        .stream()
+                        .map(Utilities::asSymbolExpression)
+                        .collect(Collectors.toList()),
+                asCombinationExpression(expressions.get(1)).expressions());
     }
 
-    public static Expression newDefinitionExpression(List<Expression> expressions) {
-        DefinitionExpression.Builder result = new DefinitionExpression.Builder();
-
+    public static Expression makeDefinitionExpression(List<Expression> expressions) {
         Expression variable = expressions.get(0);
         if (variable instanceof SymbolExpression) {
-            result.variable((SymbolExpression) variable);
-            result.value(expressions.get(1));
+            return DefinitionExpression.make(
+                    asSymbolExpression(variable),
+                    expressions.get(1));
         } else if (variable instanceof CombinationExpression) {
-            List<SymbolExpression> variables = new ArrayList<>();
-            for (Expression expression : ((CombinationExpression) variable).expressions()) {
-                variables.add((SymbolExpression) expression);
-            }
-
-            LambdaExpression.Builder lambda = new LambdaExpression.Builder();
-            for (SymbolExpression x : variables.subList(1, variables.size())) {
-                lambda.parameter(x);
-            }
-
-            for (Expression expression : ((CombinationExpression) expressions.get(1)).expressions()) {
-                lambda.expression(expression);
-            }
-
-            result.variable(variables.get(0));
-            result.value(lambda.build());
+            return DefinitionExpression.make(
+                    asSymbolExpression(asCombinationExpression(variable).expressions().get(0)),
+                    LambdaExpression.make(
+                            asCombinationExpression(variable)
+                                    .expressions()
+                                    .stream()
+                                    .skip(1)
+                                    .map(Utilities::asSymbolExpression)
+                                    .collect(Collectors.toList()),
+                            asCombinationExpression(expressions.get(1)).expressions()));
         }
 
-        return result.build();
+        throw new RuntimeException("Malformed definition");
     }
 
-    public static Expression newAssignmentExpression(List<Expression> expressions) {
-        AssignmentExpression.Builder result = new AssignmentExpression.Builder();
-        result.variable((SymbolExpression) expressions.get(0));
-        result.value(expressions.get(1));
-
-        return result.build();
+    public static Expression makeAssignmentExpression(List<Expression> expressions) {
+        return AssignmentExpression.make(asSymbolExpression(expressions.get(0)), expressions.get(1));
     }
 
-    public static Expression newIfExpression(List<Expression> expressions) {
-        IfExpression.Builder result = new IfExpression.Builder();
-        result.predicate(expressions.get(0));
-        result.consequent(expressions.get(1));
-        result.alternative(expressions.get(2));
-
-        return result.build();
+    public static Expression makeIfExpression(List<Expression> expressions) {
+        return IfExpression.make(expressions.get(0), expressions.get(1), expressions.get(2));
     }
 
-    public static Expression newBeginExpression(List<Expression> expressions) {
-        BeginExpression.Builder result = new BeginExpression.Builder();
-        for (Expression expression : expressions) {
-            result.expression(expression);
-        }
-
-        return result.build();
+    public static Expression makeBeginExpression(List<Expression> expressions) {
+        return BeginExpression.make(expressions);
     }
 }

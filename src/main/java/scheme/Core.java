@@ -8,21 +8,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class Core {
-    public static final Expression UNIT = new UnitExpression();
+    public static final Expression UNIT = UnitExpression.make();
 
-    public static final Expression FALSE = new SymbolExpression("false");
-    public static final Expression TRUE = new SymbolExpression("true");
+    public static final Expression FALSE = SymbolExpression.make("false");
+    public static final Expression TRUE = SymbolExpression.make("true");
 
-    public static final Procedure IS_NULL = new PrimitiveProcedure(new PrimitiveProcedure.Implementation() {
-        @Override
-        public Expression $(CombinationExpression arguments) {
-            if (Utilities.isNull(arguments.expressions().get(0))) {
-                return TRUE;
-            }
+    public static final Procedure IS_NULL = PrimitiveProcedure.make(
+            (CombinationExpression arguments) -> {
+                if (Utilities.isNull(arguments.expressions().get(0))) {
+                    return TRUE;
+                }
 
-            return FALSE;
-        }
-    });
+                return FALSE;
+            });
 
 
     private static String toStringUnquoted(Expression expression) {
@@ -45,23 +43,17 @@ public final class Core {
         throw new RuntimeException(result.toString());
     }
 
-    public static final Procedure ERROR = new PrimitiveProcedure(new PrimitiveProcedure.Implementation() {
-        @Override
-        public Expression $(CombinationExpression arguments) {
-            return error(arguments.expressions());
-        }
-    });
+    public static final Procedure ERROR = PrimitiveProcedure.make(
+            (CombinationExpression arguments) -> error(arguments.expressions()));
 
 
-    public static final Procedure APPLY = new PrimitiveProcedure(new PrimitiveProcedure.Implementation() {
-        @Override
-        public Expression $(CombinationExpression arguments) {
-            Procedure procedure = Utilities.downcastToProcedure(arguments.expressions().get(0));
-            CombinationExpression args = (CombinationExpression) arguments.expressions().get(1);
+    public static final Procedure APPLY = PrimitiveProcedure.make(
+            (CombinationExpression arguments) -> {
+                Procedure procedure = Utilities.asProcedure(arguments.expressions().get(0));
+                CombinationExpression args = (CombinationExpression) arguments.expressions().get(1);
 
-            return procedure.apply(args);
-        }
-    });
+                return procedure.apply(args);
+            });
 
 
     private static Number unwrapNumber(Expression expression) {
@@ -95,16 +87,12 @@ public final class Core {
         }
 
         return result instanceof Long
-                ? new IntegralExpression(result.longValue())
-                : new FractionalExpression(result.doubleValue());
+                ? IntegralExpression.make(result.longValue())
+                : FractionalExpression.make(result.doubleValue());
     }
 
-    public static final Procedure ADD = new PrimitiveProcedure(new PrimitiveProcedure.Implementation() {
-        @Override
-        public Expression $(CombinationExpression arguments) {
-            return addNumbers(arguments.expressions());
-        }
-    });
+    public static final Procedure ADD = PrimitiveProcedure.make(
+            (CombinationExpression arguments) -> addNumbers(arguments.expressions()));
 
     private static Expression subtractNumbers(List<Expression> expressions) {
         Number result = 0L;
@@ -117,16 +105,12 @@ public final class Core {
         }
 
         return result instanceof Long
-                ? new IntegralExpression(result.longValue())
-                : new FractionalExpression(result.doubleValue());
+                ? IntegralExpression.make(result.longValue())
+                : FractionalExpression.make(result.doubleValue());
     }
 
-    public static final Procedure SUBTRACT = new PrimitiveProcedure(new PrimitiveProcedure.Implementation() {
-        @Override
-        public Expression $(CombinationExpression arguments) {
-            return subtractNumbers(arguments.expressions());
-        }
-    });
+    public static final Procedure SUBTRACT = PrimitiveProcedure.make(
+            (CombinationExpression arguments) -> subtractNumbers(arguments.expressions()));
 
     private static Expression multiplyNumbers(List<Expression> expressions) {
         Number result = 1L;
@@ -139,16 +123,12 @@ public final class Core {
         }
 
         return result instanceof Long
-                ? new IntegralExpression(result.longValue())
-                : new FractionalExpression(result.doubleValue());
+                ? IntegralExpression.make(result.longValue())
+                : FractionalExpression.make(result.doubleValue());
     }
 
-    public static final Procedure MULTIPLY = new PrimitiveProcedure(new PrimitiveProcedure.Implementation() {
-        @Override
-        public Expression $(CombinationExpression arguments) {
-            return multiplyNumbers(arguments.expressions());
-        }
-    });
+    public static final Procedure MULTIPLY = PrimitiveProcedure.make(
+            (CombinationExpression arguments) -> multiplyNumbers(arguments.expressions()));
 
     private static Expression divideNumbers(List<Expression> expressions) {
         if (expressions.size() < 1) {
@@ -170,84 +150,64 @@ public final class Core {
         }
 
         return result instanceof Long
-                ? new IntegralExpression(result.longValue())
-                : new FractionalExpression(result.doubleValue());
+                ? IntegralExpression.make(result.longValue())
+                : FractionalExpression.make(result.doubleValue());
     }
 
-    public static final Procedure DIVIDE = new PrimitiveProcedure(new PrimitiveProcedure.Implementation() {
-        @Override
-        public Expression $(CombinationExpression arguments) {
-            return divideNumbers(arguments.expressions());
-        }
-    });
+    public static final Procedure DIVIDE = PrimitiveProcedure.make(
+            (CombinationExpression arguments) -> divideNumbers(arguments.expressions()));
 
     private static Expression sqrt(Expression expression) {
-        return new FractionalExpression(Math.sqrt(unwrapNumber(expression).doubleValue()));
+        return FractionalExpression.make(Math.sqrt(unwrapNumber(expression).doubleValue()));
     }
 
-    public static final Procedure SQRT = new PrimitiveProcedure(new PrimitiveProcedure.Implementation() {
-        @Override
-        public Expression $(CombinationExpression arguments) {
-            return sqrt(arguments.expressions().get(0));
-        }
-    });
+    public static final Procedure SQRT = PrimitiveProcedure.make(
+            (CombinationExpression arguments) -> sqrt(arguments.expressions().get(0)));
 
 
-    public static final Procedure CONS = new PrimitiveProcedure(new PrimitiveProcedure.Implementation() {
-        @Override
-        public Expression $(CombinationExpression arguments) {
-            Expression car = arguments.expressions().get(0);
-            Expression cdr = arguments.expressions().get(1);
+    public static final Procedure CONS = PrimitiveProcedure.make(
+            (CombinationExpression arguments) -> {
+                Expression car = arguments.expressions().get(0);
+                Expression cdr = arguments.expressions().get(1);
 
-            return new Pair(car, cdr);
-        }
-    });
+                return new Pair(car, cdr);
+            });
 
-    public static final Procedure CAR = new PrimitiveProcedure(new PrimitiveProcedure.Implementation() {
-        @Override
-        public Expression $(CombinationExpression arguments) {
-            Pair pair = (Pair) arguments.expressions().get(0);
+    public static final Procedure CAR = PrimitiveProcedure.make(
+            (CombinationExpression arguments) -> {
+                Pair pair = (Pair) arguments.expressions().get(0);
 
-            return pair.car();
-        }
-    });
+                return pair.car();
+            });
 
-    public static final Procedure CDR = new PrimitiveProcedure(new PrimitiveProcedure.Implementation() {
-        @Override
-        public Expression $(CombinationExpression arguments) {
-            Pair pair = (Pair) arguments.expressions().get(0);
+    public static final Procedure CDR = PrimitiveProcedure.make(
+            (CombinationExpression arguments) -> {
+                Pair pair = (Pair) arguments.expressions().get(0);
 
-            return pair.cdr();
-        }
-    });
+                return pair.cdr();
+            });
 
-    public static final Procedure IS_PAIR = new PrimitiveProcedure(new PrimitiveProcedure.Implementation() {
-        @Override
-        public Expression $(CombinationExpression arguments) {
-            if (Utilities.isPair(arguments.expressions().get(0))) {
-                return TRUE;
-            }
+    public static final Procedure IS_PAIR = PrimitiveProcedure.make(
+            (CombinationExpression arguments) -> {
+                if (Utilities.isPair(arguments.expressions().get(0))) {
+                    return TRUE;
+                }
 
-            return FALSE;
-        }
-    });
+                return FALSE;
+            });
 
 
-    public static final Procedure DISPLAY = new PrimitiveProcedure(new PrimitiveProcedure.Implementation() {
-        @Override
-        public Expression $(CombinationExpression arguments) {
-            System.out.print(toStringUnquoted(arguments.expressions().get(0)));
-            return UNIT;
-        }
-    });
+    public static final Procedure DISPLAY = PrimitiveProcedure.make(
+            (CombinationExpression arguments) -> {
+                System.out.print(toStringUnquoted(arguments.expressions().get(0)));
+                return UNIT;
+            });
 
-    public static final Procedure NEWLINE = new PrimitiveProcedure(new PrimitiveProcedure.Implementation() {
-        @Override
-        public Expression $(CombinationExpression arguments) {
-            System.out.println();
-            return UNIT;
-        }
-    });
+    public static final Procedure NEWLINE = PrimitiveProcedure.make(
+            (CombinationExpression arguments) -> {
+                System.out.println();
+                return UNIT;
+            });
 
 
     public static Expression eval(Expression expression, Environment environment) {

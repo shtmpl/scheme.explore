@@ -9,29 +9,29 @@ public class DefaultEnvironment implements Environment {
     private static final Map<SymbolExpression, Expression> PRIMITIVES = new HashMap<>();
 
     static {
-        PRIMITIVES.put(new SymbolExpression("null?"), Core.IS_NULL);
+        PRIMITIVES.put(SymbolExpression.make("null?"), Core.IS_NULL);
 
-        PRIMITIVES.put(new SymbolExpression("true"), Core.TRUE);
-        PRIMITIVES.put(new SymbolExpression("false"), Core.FALSE);
+        PRIMITIVES.put(SymbolExpression.make("true"), Core.TRUE);
+        PRIMITIVES.put(SymbolExpression.make("false"), Core.FALSE);
 
-        PRIMITIVES.put(new SymbolExpression("error"), Core.ERROR);
+        PRIMITIVES.put(SymbolExpression.make("error"), Core.ERROR);
 
-        PRIMITIVES.put(new SymbolExpression("apply"), Core.APPLY);
+        PRIMITIVES.put(SymbolExpression.make("apply"), Core.APPLY);
 
-        PRIMITIVES.put(new SymbolExpression("cons"), Core.CONS);
-        PRIMITIVES.put(new SymbolExpression("car"), Core.CAR);
-        PRIMITIVES.put(new SymbolExpression("cdr"), Core.CDR);
-        PRIMITIVES.put(new SymbolExpression("pair?"), Core.IS_PAIR);
+        PRIMITIVES.put(SymbolExpression.make("cons"), Core.CONS);
+        PRIMITIVES.put(SymbolExpression.make("car"), Core.CAR);
+        PRIMITIVES.put(SymbolExpression.make("cdr"), Core.CDR);
+        PRIMITIVES.put(SymbolExpression.make("pair?"), Core.IS_PAIR);
 
-        PRIMITIVES.put(new SymbolExpression("+"), Core.ADD);
-        PRIMITIVES.put(new SymbolExpression("-"), Core.SUBTRACT);
-        PRIMITIVES.put(new SymbolExpression("*"), Core.MULTIPLY);
-        PRIMITIVES.put(new SymbolExpression("/"), Core.DIVIDE);
+        PRIMITIVES.put(SymbolExpression.make("+"), Core.ADD);
+        PRIMITIVES.put(SymbolExpression.make("-"), Core.SUBTRACT);
+        PRIMITIVES.put(SymbolExpression.make("*"), Core.MULTIPLY);
+        PRIMITIVES.put(SymbolExpression.make("/"), Core.DIVIDE);
 
-        PRIMITIVES.put(new SymbolExpression("sqrt"), Core.SQRT);
+        PRIMITIVES.put(SymbolExpression.make("sqrt"), Core.SQRT);
 
-        PRIMITIVES.put(new SymbolExpression("display"), Core.DISPLAY);
-        PRIMITIVES.put(new SymbolExpression("newline"), Core.NEWLINE);
+        PRIMITIVES.put(SymbolExpression.make("display"), Core.DISPLAY);
+        PRIMITIVES.put(SymbolExpression.make("newline"), Core.NEWLINE);
     }
 
 

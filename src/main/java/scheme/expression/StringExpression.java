@@ -4,9 +4,14 @@ import scheme.Environment;
 import scheme.Expression;
 
 public class StringExpression implements Expression {
+    public static StringExpression make(String value) {
+        return new StringExpression(value);
+    }
+
+
     private final String value;
 
-    public StringExpression(String value) {
+    private StringExpression(String value) {
         this.value = value;
     }
 

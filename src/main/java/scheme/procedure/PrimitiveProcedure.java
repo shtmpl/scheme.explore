@@ -10,10 +10,14 @@ public class PrimitiveProcedure implements Procedure {
         Expression $(CombinationExpression arguments);
     }
 
+    public static PrimitiveProcedure make(Implementation implementation) {
+        return new PrimitiveProcedure(implementation);
+    }
+
 
     private final Implementation implementation;
 
-    public PrimitiveProcedure(Implementation implementation) {
+    private PrimitiveProcedure(Implementation implementation) {
         this.implementation = implementation;
     }
 

@@ -5,32 +5,17 @@ import scheme.Environment;
 import scheme.Expression;
 
 public class DefinitionExpression implements Expression {
-    public static class Builder {
-        private SymbolExpression variable;
-        private Expression value;
-
-        public Builder variable(SymbolExpression variable) {
-            this.variable = variable;
-            return this;
-        }
-
-        public Builder value(Expression value) {
-            this.value = value;
-            return this;
-        }
-
-        public DefinitionExpression build() {
-            return new DefinitionExpression(this);
-        }
+    public static DefinitionExpression make(SymbolExpression variable, Expression value) {
+        return new DefinitionExpression(variable, value);
     }
 
 
     private final SymbolExpression variable;
     private final Expression value;
 
-    private DefinitionExpression(Builder builder) {
-        this.variable = builder.variable;
-        this.value = builder.value;
+    private DefinitionExpression(SymbolExpression variable, Expression value) {
+        this.variable = variable;
+        this.value = value;
     }
 
     public SymbolExpression variable() {

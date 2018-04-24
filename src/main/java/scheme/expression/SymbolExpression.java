@@ -6,9 +6,14 @@ import scheme.Expression;
 import java.util.Objects;
 
 public class SymbolExpression implements Expression {
+    public static SymbolExpression make(String name) {
+        return new SymbolExpression(name);
+    }
+
+
     private final String name;
 
-    public SymbolExpression(String name) {
+    private SymbolExpression(String name) {
         this.name = name;
     }
 

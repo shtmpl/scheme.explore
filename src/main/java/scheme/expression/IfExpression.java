@@ -5,29 +5,8 @@ import scheme.Expression;
 import scheme.Utilities;
 
 public class IfExpression implements Expression {
-    public static class Builder {
-        private Expression predicate;
-        private Expression consequent;
-        private Expression alternative;
-
-        public Builder predicate(Expression predicate) {
-            this.predicate = predicate;
-            return this;
-        }
-
-        public Builder consequent(Expression consequent) {
-            this.consequent = consequent;
-            return this;
-        }
-
-        public Builder alternative(Expression alternative) {
-            this.alternative = alternative;
-            return this;
-        }
-
-        public IfExpression build() {
-            return new IfExpression(this);
-        }
+    public static IfExpression make(Expression predicate, Expression consequent, Expression alternative) {
+        return new IfExpression(predicate, consequent, alternative);
     }
 
 
@@ -35,10 +14,10 @@ public class IfExpression implements Expression {
     private final Expression consequent;
     private final Expression alternative;
 
-    public IfExpression(Builder builder) {
-        this.predicate = builder.predicate;
-        this.consequent = builder.consequent;
-        this.alternative = builder.alternative;
+    private IfExpression(Expression predicate, Expression consequent, Expression alternative) {
+        this.predicate = predicate;
+        this.consequent = consequent;
+        this.alternative = alternative;
     }
 
     public Expression predicate() {

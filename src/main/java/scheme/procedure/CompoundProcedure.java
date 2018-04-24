@@ -8,17 +8,24 @@ import java.util.List;
 import java.util.Map;
 
 public class CompoundProcedure implements Procedure {
+    public static CompoundProcedure make(Environment environment,
+                                         List<SymbolExpression> parameters,
+                                         List<Expression> expressions) {
+        return new CompoundProcedure(environment, parameters, expressions);
+    }
+
+
     private final Environment environment;
 
     private final List<SymbolExpression> parameters;
-    private final List<? extends Expression> body;
+    private final List<Expression> expressions;
 
-    public CompoundProcedure(Environment environment,
+    private CompoundProcedure(Environment environment,
                              List<SymbolExpression> parameters,
-                             List<? extends Expression> body) {
+                             List<Expression> expressions) {
         this.environment = environment;
         this.parameters = parameters;
-        this.body = body;
+        this.expressions = expressions;
     }
 
     public Environment environment() {
@@ -29,8 +36,8 @@ public class CompoundProcedure implements Procedure {
         return parameters;
     }
 
-    public List<? extends Expression> body() {
-        return body;
+    public List<Expression> expressions() {
+        return expressions;
     }
 
     @Override
@@ -39,7 +46,7 @@ public class CompoundProcedure implements Procedure {
     }
 
     private static Map<SymbolExpression, Expression> bindings(List<SymbolExpression> variables,
-                                                              List<? extends Expression> values) {
+                                                              List<Expression> values) {
         if (variables.size() < values.size()) {
             throw new RuntimeException(String.format("Too many arguments supplied: %s %s", variables, values));
         } else if (variables.size() > values.size()) {
@@ -59,7 +66,7 @@ public class CompoundProcedure implements Procedure {
         Environment extended = environment.extend(bindings(parameters, arguments.expressions()));
 
         Expression result = Core.UNIT;
-        for (Expression expression : body) {
+        for (Expression expression : expressions) {
             result = expression.eval(extended);
         }
 

@@ -5,31 +5,17 @@ import scheme.Environment;
 import scheme.Expression;
 
 public class AssignmentExpression implements Expression {
-    public static class Builder {
-        private SymbolExpression variable;
-        private Expression value;
-
-        public Builder variable(SymbolExpression variable) {
-            this.variable = variable;
-            return this;
-        }
-
-        public Builder value(Expression value) {
-            this.value = value;
-            return this;
-        }
-
-        public AssignmentExpression build() {
-            return new AssignmentExpression(this);
-        }
+    public static AssignmentExpression make(SymbolExpression variable, Expression value) {
+        return new AssignmentExpression(variable, value);
     }
+
 
     private final SymbolExpression variable;
     private final Expression value;
 
-    public AssignmentExpression(Builder builder) {
-        this.variable = builder.variable;
-        this.value = builder.value;
+    private AssignmentExpression(SymbolExpression variable, Expression value) {
+        this.variable = variable;
+        this.value = value;
     }
 
     public SymbolExpression variable() {

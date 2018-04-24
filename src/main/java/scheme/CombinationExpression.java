@@ -1,27 +1,18 @@
 package scheme;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CombinationExpression implements Expression {
-    public static class Builder {
-        private List<Expression> expressions = new ArrayList<>();
-
-        public Builder expression(Expression expression) {
-            expressions.add(expression);
-            return this;
-        }
-
-        public CombinationExpression build() {
-            return new CombinationExpression(this);
-        }
+    public static CombinationExpression make(List<Expression> expressions) {
+        return new CombinationExpression(expressions);
     }
 
 
     private final List<Expression> expressions;
 
-    private CombinationExpression(Builder builder) {
-        this.expressions = builder.expressions;
+    private CombinationExpression(List<Expression> expressions) {
+        this.expressions = expressions;
     }
 
     public List<Expression> expressions() {
@@ -30,14 +21,12 @@ public class CombinationExpression implements Expression {
 
     @Override
     public Expression eval(Environment environment) {
-        Procedure operator = Utilities.downcastToProcedure(expressions.get(0).eval(environment));
-
-        Builder builder = new Builder();
-        for (Expression expression : expressions.subList(1, expressions.size())) {
-            builder.expression(expression.eval(environment));
-        }
-
-        CombinationExpression operands = builder.build();
+        Procedure operator = Utilities.asProcedure(expressions.get(0).eval(environment));
+        CombinationExpression operands = CombinationExpression.make(expressions
+                .stream()
+                .skip(1)
+                .map((Expression expression) -> expression.eval(environment))
+                .collect(Collectors.toList()));
 
         return operator.apply(operands);
     }

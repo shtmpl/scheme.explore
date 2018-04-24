@@ -45,7 +45,7 @@ public final class Utilities {
     }
 
     public static boolean isPair(Expression expression) {
-        return expression instanceof Pair;
+        return expression instanceof CombinationExpression;
     }
 
     public static List<Expression> mapEval(List<Expression> expressions, Environment environment) {

@@ -22,6 +22,7 @@ public class DefaultEnvironment implements Environment {
         PRIMITIVES.put(SymbolExpression.make("car"), Core.CAR);
         PRIMITIVES.put(SymbolExpression.make("cdr"), Core.CDR);
         PRIMITIVES.put(SymbolExpression.make("pair?"), Core.IS_PAIR);
+        PRIMITIVES.put(SymbolExpression.make("list"), Core.LIST);
 
         PRIMITIVES.put(SymbolExpression.make("eq?"), Core.IS_EQ);
 

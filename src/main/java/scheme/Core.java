@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static java.util.Arrays.asList;
+
 public final class Core {
     public static final Expression UNIT = UnitExpression.make();
 
@@ -58,35 +60,19 @@ public final class Core {
 
 
     public static final Procedure CONS = PrimitiveProcedure.make(
-            (CombinationExpression arguments) -> {
-                Expression car = arguments.expressions().get(0);
-                Expression cdr = arguments.expressions().get(1);
-
-                return new Pair(car, cdr);
-            });
+            (CombinationExpression arguments) -> arguments);
 
     public static final Procedure CAR = PrimitiveProcedure.make(
-            (CombinationExpression arguments) -> {
-                Pair pair = (Pair) arguments.expressions().get(0);
-
-                return pair.car();
-            });
+            (CombinationExpression arguments) -> Utilities.asCombinationExpression(arguments.expressions().get(0)).car());
 
     public static final Procedure CDR = PrimitiveProcedure.make(
-            (CombinationExpression arguments) -> {
-                Pair pair = (Pair) arguments.expressions().get(0);
-
-                return pair.cdr();
-            });
+            (CombinationExpression arguments) -> Utilities.asCombinationExpression(arguments.expressions().get(0)).cdr());
 
     public static final Procedure IS_PAIR = PrimitiveProcedure.make(
-            (CombinationExpression arguments) -> {
-                if (Utilities.isPair(arguments.expressions().get(0))) {
-                    return TRUE;
-                }
+            (CombinationExpression arguments) -> Utilities.isPair(arguments.expressions().get(0)) ? TRUE : FALSE);
 
-                return FALSE;
-            });
+    public static final Procedure LIST = PrimitiveProcedure.make(
+            (CombinationExpression arguments) -> arguments);
 
 
     private static boolean isEq(Expression first, Expression other) {

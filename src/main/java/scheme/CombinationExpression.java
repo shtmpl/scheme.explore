@@ -1,5 +1,7 @@
 package scheme;
 
+import scheme.expression.UnitExpression;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,6 +20,16 @@ public class CombinationExpression implements Expression {
 
     public List<Expression> expressions() {
         return expressions;
+    }
+
+    public Expression car() {
+        return expressions.get(0);
+    }
+
+    public Expression cdr() {
+        return expressions.size() < 2
+                ? UnitExpression.make()
+                : CombinationExpression.make(expressions.subList(1, expressions.size()));
     }
 
     @Override

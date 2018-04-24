@@ -3,23 +3,24 @@ package scheme.expression;
 import scheme.Environment;
 import scheme.Expression;
 
-public class Text implements Expression {
-    private final String value;
+public class FractionalExpression implements Expression {
+    private final Double value;
 
-    public Text(String value) {
+    public FractionalExpression(Double value) {
         this.value = value;
     }
 
-    public String value() {
+    public Double value() {
         return value;
     }
 
+    @Override
     public Expression eval(Environment environment) {
         return this;
     }
 
     @Override
     public String toString() {
-        return String.format("\"%s\"", value);
+        return String.format("%s", value);
     }
 }

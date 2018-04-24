@@ -3,10 +3,10 @@ package scheme.expression;
 import scheme.Environment;
 import scheme.Expression;
 
-public class Quote implements Expression {
+public class QuoteExpression implements Expression {
     private final Expression expression;
 
-    public Quote(Expression expression) {
+    public QuoteExpression(Expression expression) {
         this.expression = expression;
     }
 

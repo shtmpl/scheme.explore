@@ -3,7 +3,7 @@ package scheme;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Combination implements Expression {
+public class CombinationExpression implements Expression {
     public static class Builder {
         private List<Expression> expressions = new ArrayList<>();
 
@@ -12,15 +12,15 @@ public class Combination implements Expression {
             return this;
         }
 
-        public Combination build() {
-            return new Combination(this);
+        public CombinationExpression build() {
+            return new CombinationExpression(this);
         }
     }
 
 
     private final List<Expression> expressions;
 
-    private Combination(Builder builder) {
+    private CombinationExpression(Builder builder) {
         this.expressions = builder.expressions;
     }
 
@@ -37,7 +37,7 @@ public class Combination implements Expression {
             builder.expression(expression.eval(environment));
         }
 
-        Combination operands = builder.build();
+        CombinationExpression operands = builder.build();
 
         return operator.apply(operands);
     }

@@ -5,10 +5,10 @@ import scheme.Expression;
 
 import java.util.Objects;
 
-public class Symbol implements Expression {
+public class SymbolExpression implements Expression {
     private final String name;
 
-    public Symbol(String name) {
+    public SymbolExpression(String name) {
         this.name = name;
     }
 
@@ -31,7 +31,7 @@ public class Symbol implements Expression {
             return false;
         }
 
-        Symbol that = (Symbol) other;
+        SymbolExpression that = (SymbolExpression) other;
         return Objects.equals(name, that.name);
     }
 

@@ -7,50 +7,34 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public final class Syntax {
-    private static final Parser<Expression> UNIT =
+    static final Parser<Expression> EXPRESSION_UNIT =
             Parsers.as(
-                    Utilities::newUnit,
+                    Utilities::newUnitExpression,
                     Parsers.string("()"));
 
-    public static Parser<Expression> unit() {
-        return UNIT;
-    }
-
     private static final Pattern PATTERN_INTEGRAL = Pattern.compile("^\\d+");
-    private static final Parser<Expression> INTEGRAL =
+    static final Parser<Expression> EXPRESSION_INTEGRAL =
             Parsers.as(
-                    Utilities::newIntegral,
+                    Utilities::newIntegralExpression,
                     Parsers.pattern(PATTERN_INTEGRAL));
 
-    public static Parser<Expression> integral() {
-        return INTEGRAL;
-    }
-
     private static final Pattern PATTERN_FRACTIONAL = Pattern.compile("^(\\d+\\.\\d+|\\d+\\.|\\.\\d+)");
-    private static final Parser<Expression> FRACTIONAL =
+    static final Parser<Expression> EXPRESSION_FRACTIONAL =
             Parsers.as(
-                    Utilities::newFractional,
+                    Utilities::newFractionalExpression,
                     Parsers.pattern(PATTERN_FRACTIONAL));
 
-    public static Parser<Expression> fractional() {
-        return FRACTIONAL;
-    }
-
-    private static final Parser<Expression> STRING =
+    static final Parser<Expression> EXPRESSION_STRING =
             Parsers.as(
-                    Utilities::newString,
+                    Utilities::newStringExpression,
                     Parsers.between(
                             Parsers.character('"'),
                             Parsers.asString(Parsers.zeroOrMore(Parsers.characterExcept("\""))),
                             Parsers.character('"')));
 
-    public static Parser<Expression> string() {
-        return STRING;
-    }
-
-    private static final Parser<Expression> SYMBOL =
+    static final Parser<Expression> EXPRESSION_SYMBOL =
             Parsers.as(
-                    Utilities::newSymbol,
+                    Utilities::newSymbolExpression,
                     Parsers.asString(
                             Parsers.oneOrMore(
                                     Parsers.anyOf(
@@ -60,15 +44,10 @@ public final class Syntax {
                                             Parsers.characterOf("<=>"),
                                             Parsers.characterOf("?!")))));
 
-    public static Parser<Expression> symbol() {
-        return SYMBOL;
-    }
-
-
     private static final Parser.Reference<Expression> REF_EXPRESSION = Parser.reference();
 
-    private static final Parser<Expression> COMBINATION =
-            Parsers.as(Utilities::newCombination,
+    static final Parser<Expression> EXPRESSION_COMBINATION =
+            Parsers.as(Utilities::newCombinationExpression,
                     Parsers.parenthesised(
                             Parsers.between(
                                     Parsers.optional(Parsers.whitespaces()),
@@ -77,17 +56,9 @@ public final class Syntax {
                                             REF_EXPRESSION.parser()),
                                     Parsers.optional(Parsers.whitespaces()))));
 
-    public static Parser<Expression> combination() {
-        return COMBINATION;
-    }
-
-    private static final Parser<Expression> KEYWORD_QUOTE =
+    static final Parser<Expression> EXPRESSION_QUOTE =
             Parsers.as(
-                    Utilities::newSymbol,
-                    Parsers.string("quote"));
-    private static final Parser<Expression> QUOTE =
-            Parsers.as(
-                    Utilities::newQuote,
+                    Utilities::newQuoteExpression,
                     Parsers.anyOf(
                             Parsers.after(
                                     Parsers.string("'"),
@@ -95,21 +66,16 @@ public final class Syntax {
                             Parsers.parenthesised(
                                     Parsers.between(
                                             Parsers.optional(Parsers.whitespaces()),
-                                            Parsers.as(
-                                                    (List<Expression> expressions) -> expressions.get(1),
-                                                    Parsers.separatedBy(
+                                            Parsers.after(
+                                                    Parsers.string("quote"),
+                                                    Parsers.after(
                                                             Parsers.whitespaces(),
-                                                            KEYWORD_QUOTE,
                                                             REF_EXPRESSION.parser())),
                                             Parsers.optional(Parsers.whitespaces())))));
 
-    public static Parser<Expression> quote() {
-        return QUOTE;
-    }
-
-    private static final Parser<Expression> LAMBDA =
+    static final Parser<Expression> EXPRESSION_LAMBDA =
             Parsers.as(
-                    Utilities::newLambda,
+                    Utilities::newLambdaExpression,
                     Parsers.parenthesised(
                             Parsers.between(
                                     Parsers.optional(Parsers.whitespaces()),
@@ -123,25 +89,21 @@ public final class Syntax {
                                                                     Parsers.between(
                                                                             Parsers.optional(Parsers.whitespaces()),
                                                                             Parsers.as(
-                                                                                    Utilities::newCombination,
+                                                                                    Utilities::newCombinationExpression,
                                                                                     Parsers.zeroOrMoreSeparatedBy(
                                                                                             Parsers.whitespaces(),
-                                                                                            SYMBOL)),
+                                                                                            EXPRESSION_SYMBOL)),
                                                                             Parsers.optional(Parsers.whitespaces()))),
                                                             Parsers.as(
-                                                                    Utilities::newCombination,
+                                                                    Utilities::newCombinationExpression,
                                                                     Parsers.oneOrMoreSeparatedBy(
                                                                             Parsers.whitespaces(),
                                                                             REF_EXPRESSION.parser()))))),
                                     Parsers.optional(Parsers.whitespaces()))));
 
-    public static Parser<Expression> lambda() {
-        return LAMBDA;
-    }
-
-    private static final Parser<Expression> DEFINITION =
+    static final Parser<Expression> EXPRESSION_DEFINITION =
             Parsers.as(
-                    Utilities::newDefinition,
+                    Utilities::newDefinitionExpression,
                     Parsers.parenthesised(
                             Parsers.between(
                                     Parsers.optional(Parsers.whitespaces()),
@@ -152,25 +114,21 @@ public final class Syntax {
                                                     Parsers.anyOf(
                                                             Parsers.separatedBy(
                                                                     Parsers.whitespaces(),
-                                                                    SYMBOL,
+                                                                    EXPRESSION_SYMBOL,
                                                                     REF_EXPRESSION.parser()),
                                                             Parsers.separatedBy(
                                                                     Parsers.whitespaces(),
-                                                                    COMBINATION,
+                                                                    EXPRESSION_COMBINATION,
                                                                     Parsers.as(
-                                                                            Utilities::newCombination,
+                                                                            Utilities::newCombinationExpression,
                                                                             Parsers.oneOrMoreSeparatedBy(
                                                                                     Parsers.whitespaces(),
                                                                                     REF_EXPRESSION.parser())))))),
                                     Parsers.optional(Parsers.whitespaces()))));
 
-    public static Parser<Expression> definition() {
-        return DEFINITION;
-    }
-
-    private static final Parser<Expression> ASSIGNMENT =
+    static final Parser<Expression> EXPRESSION_ASSIGNMENT =
             Parsers.as(
-                    Utilities::newAssignment,
+                    Utilities::newAssignmentExpression,
                     Parsers.parenthesised(
                             Parsers.between(
                                     Parsers.optional(Parsers.whitespaces()),
@@ -180,17 +138,13 @@ public final class Syntax {
                                                     Parsers.whitespaces(),
                                                     Parsers.separatedBy(
                                                             Parsers.whitespaces(),
-                                                            SYMBOL,
+                                                            EXPRESSION_SYMBOL,
                                                             REF_EXPRESSION.parser()))),
                                     Parsers.optional(Parsers.whitespaces()))));
 
-    public static Parser<Expression> assignment() {
-        return ASSIGNMENT;
-    }
-
-    private static final Parser<Expression> IF =
+    static final Parser<Expression> EXPRESSION_IF =
             Parsers.as(
-                    Utilities::newIf,
+                    Utilities::newIfExpression,
                     Parsers.parenthesised(
                             Parsers.between(
                                     Parsers.optional(Parsers.whitespaces()),
@@ -205,13 +159,9 @@ public final class Syntax {
                                                             REF_EXPRESSION.parser()))),
                                     Parsers.optional(Parsers.whitespaces()))));
 
-    public static Parser<Expression> if_() {
-        return IF;
-    }
-
-    private static final Parser<Expression> BEGIN =
+    static final Parser<Expression> EXPRESSION_BEGIN =
             Parsers.as(
-                    Utilities::newBegin,
+                    Utilities::newBeginExpression,
                     Parsers.parenthesised(
                             Parsers.between(
                                     Parsers.optional(Parsers.whitespaces()),
@@ -224,39 +174,31 @@ public final class Syntax {
                                                             REF_EXPRESSION.parser()))),
                                     Parsers.optional(Parsers.whitespaces()))));
 
-    public static Parser<Expression> begin() {
-        return BEGIN;
-    }
-
-    private static final Parser<Expression> EXPRESSION =
+    static final Parser<Expression> EXPRESSION =
             Parsers.anyOf(
-                    FRACTIONAL,
-                    INTEGRAL,
-                    STRING,
-                    SYMBOL,
-                    UNIT,
-                    QUOTE,
-                    LAMBDA,
-                    DEFINITION,
-                    ASSIGNMENT,
-                    IF,
-                    BEGIN,
-                    COMBINATION);
+                    EXPRESSION_FRACTIONAL,
+                    EXPRESSION_INTEGRAL,
+                    EXPRESSION_STRING,
+                    EXPRESSION_SYMBOL,
+                    EXPRESSION_UNIT,
+                    EXPRESSION_QUOTE,
+                    EXPRESSION_LAMBDA,
+                    EXPRESSION_DEFINITION,
+                    EXPRESSION_ASSIGNMENT,
+                    EXPRESSION_IF,
+                    EXPRESSION_BEGIN,
+                    EXPRESSION_COMBINATION);
 
     static {
         REF_EXPRESSION.set(EXPRESSION);
     }
 
 
-    private static final Parser<List<Expression>> PROGRAM =
+    public static final Parser<List<Expression>> PROGRAM =
             Parsers.between(
                     Parsers.optional(Parsers.whitespaces()),
                     Parsers.oneOrMoreSeparatedBy(
                             Parsers.whitespaces(),
                             EXPRESSION),
                     Parsers.optional(Parsers.whitespaces()));
-
-    public static Parser<List<Expression>> program() {
-        return PROGRAM;
-    }
 }

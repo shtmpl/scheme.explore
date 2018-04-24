@@ -8,7 +8,7 @@ import scheme.Utilities;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Begin implements Expression {
+public class BeginExpression implements Expression {
     public static class Builder {
         private List<Expression> expressions = new ArrayList<>();
 
@@ -17,15 +17,15 @@ public class Begin implements Expression {
             return this;
         }
 
-        public Begin build() {
-            return new Begin(this);
+        public BeginExpression build() {
+            return new BeginExpression(this);
         }
     }
 
 
     private final List<Expression> expressions;
 
-    private Begin(Builder builder) {
+    private BeginExpression(Builder builder) {
         this.expressions = builder.expressions;
     }
 

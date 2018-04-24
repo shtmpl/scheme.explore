@@ -3,14 +3,14 @@ package scheme.expression;
 import scheme.Environment;
 import scheme.Expression;
 
-public class Fractional implements Expression {
-    private final Double value;
+public class IntegralExpression implements Expression {
+    private final Long value;
 
-    public Fractional(Double value) {
+    public IntegralExpression(Long value) {
         this.value = value;
     }
 
-    public Double value() {
+    public Long value() {
         return value;
     }
 

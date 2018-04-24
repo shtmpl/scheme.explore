@@ -3,17 +3,17 @@ package scheme.expression;
 import scheme.Environment;
 import scheme.Expression;
 import scheme.Strings;
-import scheme.procedure.Compound;
+import scheme.procedure.CompoundProcedure;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Lambda implements Expression {
+public class LambdaExpression implements Expression {
     public static class Builder {
-        private List<Symbol> parameters = new ArrayList<>();
+        private List<SymbolExpression> parameters = new ArrayList<>();
         private List<Expression> expressions = new ArrayList<>();
 
-        public Builder parameter(Symbol parameter) {
+        public Builder parameter(SymbolExpression parameter) {
             parameters.add(parameter);
             return this;
         }
@@ -23,21 +23,21 @@ public class Lambda implements Expression {
             return this;
         }
 
-        public Lambda build() {
-            return new Lambda(this);
+        public LambdaExpression build() {
+            return new LambdaExpression(this);
         }
     }
 
 
-    private final List<Symbol> parameters;
+    private final List<SymbolExpression> parameters;
     private final List<? extends Expression> body;
 
-    private Lambda(Builder builder) {
+    private LambdaExpression(Builder builder) {
         this.parameters = builder.parameters;
         this.body = builder.expressions;
     }
 
-    public List<Symbol> parameters() {
+    public List<SymbolExpression> parameters() {
         return parameters;
     }
 
@@ -47,7 +47,7 @@ public class Lambda implements Expression {
 
     @Override
     public Expression eval(Environment environment) {
-        return new Compound(environment, parameters, body);
+        return new CompoundProcedure(environment, parameters, body);
     }
 
     @Override

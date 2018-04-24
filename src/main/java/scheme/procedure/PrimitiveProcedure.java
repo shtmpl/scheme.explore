@@ -3,17 +3,17 @@ package scheme.procedure;
 import scheme.Environment;
 import scheme.Expression;
 import scheme.Procedure;
-import scheme.Combination;
+import scheme.CombinationExpression;
 
-public class Primitive implements Procedure {
+public class PrimitiveProcedure implements Procedure {
     public interface Implementation {
-        Expression $(Combination arguments);
+        Expression $(CombinationExpression arguments);
     }
 
 
     private final Implementation implementation;
 
-    public Primitive(Implementation implementation) {
+    public PrimitiveProcedure(Implementation implementation) {
         this.implementation = implementation;
     }
 
@@ -23,7 +23,7 @@ public class Primitive implements Procedure {
     }
 
     @Override
-    public Expression apply(Combination arguments) {
+    public Expression apply(CombinationExpression arguments) {
         return implementation.$(arguments);
     }
 }

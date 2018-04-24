@@ -33,7 +33,7 @@ public class ExpressionReader extends FilterReader {
             }
 
             Result<List<Expression>> result;
-            while ((result = Syntax.program().apply(line)).isSuccess()) {
+            while ((result = Syntax.PROGRAM.apply(line)).isSuccess()) {
                 for (Expression expression : result.value()) {
                     queue.offer(expression);
                 }

@@ -4,7 +4,7 @@ import scheme.Environment;
 import scheme.Expression;
 import scheme.Utilities;
 
-public class If implements Expression {
+public class IfExpression implements Expression {
     public static class Builder {
         private Expression predicate;
         private Expression consequent;
@@ -25,8 +25,8 @@ public class If implements Expression {
             return this;
         }
 
-        public If build() {
-            return new If(this);
+        public IfExpression build() {
+            return new IfExpression(this);
         }
     }
 
@@ -35,7 +35,7 @@ public class If implements Expression {
     private final Expression consequent;
     private final Expression alternative;
 
-    public If(Builder builder) {
+    public IfExpression(Builder builder) {
         this.predicate = builder.predicate;
         this.consequent = builder.consequent;
         this.alternative = builder.alternative;

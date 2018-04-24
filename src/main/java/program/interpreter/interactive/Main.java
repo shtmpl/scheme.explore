@@ -1,14 +1,10 @@
 package program.interpreter.interactive;
 
 import scheme.*;
-import scheme.syntax.Result;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.List;
-
-import static java.util.Arrays.asList;
 
 public class Main {
     private static final Environment ENVIRONMENT_GLOBAL = new DefaultEnvironment(Environment.EMPTY);

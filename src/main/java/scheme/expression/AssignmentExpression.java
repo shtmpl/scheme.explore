@@ -4,12 +4,12 @@ import scheme.Core;
 import scheme.Environment;
 import scheme.Expression;
 
-public class Definition implements Expression {
+public class AssignmentExpression implements Expression {
     public static class Builder {
-        private Symbol variable;
+        private SymbolExpression variable;
         private Expression value;
 
-        public Builder variable(Symbol variable) {
+        public Builder variable(SymbolExpression variable) {
             this.variable = variable;
             return this;
         }
@@ -19,21 +19,20 @@ public class Definition implements Expression {
             return this;
         }
 
-        public Definition build() {
-            return new Definition(this);
+        public AssignmentExpression build() {
+            return new AssignmentExpression(this);
         }
     }
 
-
-    private final Symbol variable;
+    private final SymbolExpression variable;
     private final Expression value;
 
-    private Definition(Builder builder) {
+    public AssignmentExpression(Builder builder) {
         this.variable = builder.variable;
         this.value = builder.value;
     }
 
-    public Symbol variable() {
+    public SymbolExpression variable() {
         return variable;
     }
 
@@ -43,12 +42,12 @@ public class Definition implements Expression {
 
     @Override
     public Expression eval(Environment environment) {
-        environment.define(variable, value.eval(environment));
+        environment.set(variable, value.eval(environment));
         return Core.UNIT;
     }
 
     @Override
     public String toString() {
-        return String.format("(define %s %s)", variable, value);
+        return String.format("(set! %s %s)", variable, value);
     }
 }

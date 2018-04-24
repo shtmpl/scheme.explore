@@ -3,7 +3,7 @@ package scheme.expression;
 import scheme.Environment;
 import scheme.Expression;
 
-public class Unit implements Expression {
+public class UnitExpression implements Expression {
     @Override
     public Expression eval(Environment environment) {
         return this;

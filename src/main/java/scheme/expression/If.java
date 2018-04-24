@@ -59,4 +59,9 @@ public class If implements Expression {
                 ? consequent.eval(environment)
                 : alternative.eval(environment);
     }
+
+    @Override
+    public String toString() {
+        return String.format("(if %s %s %s)", predicate, consequent, alternative);
+    }
 }

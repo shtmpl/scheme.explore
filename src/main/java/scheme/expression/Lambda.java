@@ -2,6 +2,7 @@ package scheme.expression;
 
 import scheme.Environment;
 import scheme.Expression;
+import scheme.Strings;
 import scheme.procedure.Compound;
 
 import java.util.ArrayList;
@@ -47,5 +48,10 @@ public class Lambda implements Expression {
     @Override
     public Expression eval(Environment environment) {
         return new Compound(environment, parameters, body);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("(lambda (%s) %s)", Strings.join(" ", parameters), Strings.join(" ", body));
     }
 }

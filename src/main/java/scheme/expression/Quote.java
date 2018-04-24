@@ -18,4 +18,9 @@ public class Quote implements Expression {
     public Expression eval(Environment environment) {
         return expression;
     }
+
+    @Override
+    public String toString() {
+        return expression.toString();
+    }
 }

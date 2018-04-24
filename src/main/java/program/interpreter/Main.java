@@ -1,25 +1,19 @@
 package program.interpreter;
 
 import scheme.*;
-import scheme.expression.Symbol;
-import scheme.syntax.Lexer;
-import scheme.syntax.Parser;
+import scheme.syntax.Result;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PushbackReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+
+import static java.util.Arrays.asList;
 
 public final class Main {
     private static final Environment ENVIRONMENT_GLOBAL = new DefaultEnvironment(Environment.EMPTY);
-
-    private static final int MAX_IDENTIFIER_LENGTH = 1024;
 
     private static BufferedReader createBufferedFileReader(String path) {
         try {
@@ -35,23 +29,35 @@ public final class Main {
             System.exit(1);
         }
 
-        try (PushbackReader reader = new PushbackReader(createBufferedFileReader(args[0]), MAX_IDENTIFIER_LENGTH)) {
-            for (Expression expression : new Parser(new Lexer(reader))) {
-                try {
-                    Expression evaluated = expression.eval(ENVIRONMENT_GLOBAL);
-                    if (Utilities.isNull(evaluated)) {
-                        continue;
+        try (BufferedReader reader = createBufferedFileReader(args[0])) {
+            String line, remaining = "";
+            while ((line = reader.readLine()) != null) {
+                if (!remaining.isEmpty()) {
+                    line = Strings.join(" ", asList(remaining, line));
+                }
+
+                Result<List<Expression>> result;
+                while ((result = Syntax.program().apply(line)).isSuccess()) {
+                    for (Expression expression : result.value()) {
+                        try {
+                            Expression evaluated = expression.eval(ENVIRONMENT_GLOBAL);
+                            if (Utilities.isNull(evaluated)) {
+                                /*NOP*/
+                            } else {
+                                System.out.printf("%s%n", evaluated);
+                            }
+                        } catch (RuntimeException exception) {
+                            System.out.printf("%s%n", exception.getMessage());
+                        }
                     }
 
-                    System.out.printf("%s%n", evaluated);
-                } catch (RuntimeException exception) {
-                    System.out.printf("%s%n", exception.getMessage());
+                    line = result.remaining();
                 }
+
+                remaining = result.remaining();
             }
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
-
-        System.out.println("Done!");
     }
 }

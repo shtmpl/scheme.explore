@@ -46,4 +46,9 @@ public class Definition implements Expression {
         environment.define(variable, value.eval(environment));
         return Core.UNIT;
     }
+
+    @Override
+    public String toString() {
+        return String.format("(define %s %s)", variable, value);
+    }
 }

@@ -45,4 +45,9 @@ public class Assignment implements Expression {
         environment.set(variable, value.eval(environment));
         return Core.UNIT;
     }
+
+    @Override
+    public String toString() {
+        return String.format("(set! %s %s)", variable, value);
+    }
 }

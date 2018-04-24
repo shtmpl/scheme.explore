@@ -2,6 +2,7 @@ package scheme.expression;
 
 import scheme.Environment;
 import scheme.Expression;
+import scheme.Strings;
 import scheme.Utilities;
 
 import java.util.ArrayList;
@@ -31,5 +32,10 @@ public class Begin implements Expression {
     @Override
     public Expression eval(Environment environment) {
         return Utilities.mapEval(expressions, environment).get(expressions.size() - 1);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("(begin %s)", Strings.join(" ", expressions));
     }
 }

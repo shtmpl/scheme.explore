@@ -22,39 +22,28 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        try (BufferedReader reader = createBufferedStdinReader()) {
+        try (ExpressionReader reader = new ExpressionReader(createBufferedStdinReader())) {
             System.out.print(PROMPT_IN);
 
-            String line, remaining = "";
-            while ((line = reader.readLine()) != null) {
-                if (!remaining.isEmpty()) {
-                    line = Strings.join(" ", asList(remaining, line));
-                }
-
-                Result<List<Expression>> result;
-                while ((result = Syntax.program().apply(line)).isSuccess()) {
-                    for (Expression expression : result.value()) {
-                        try {
-                            Expression evaluated = expression.eval(ENVIRONMENT_GLOBAL);
-                            if (Utilities.isNull(evaluated)) {
-                                /*NOP*/
-                            } else {
-                                System.out.printf("%s%s%n", PROMPT_OUT, evaluated);
-                            }
-                        } catch (RuntimeException exception) {
-                            System.out.printf("%s%s%n", PROMPT_ERR, exception.getMessage());
-                        }
+            Expression expression;
+            while ((expression = reader.nextExpression()) != null) {
+                try {
+                    Expression evaluated = expression.eval(ENVIRONMENT_GLOBAL);
+                    if (Utilities.isNull(evaluated)) {
+                        /*NOP*/
+                    } else {
+                        System.out.printf("%s%s%n", PROMPT_OUT, evaluated);
                     }
-
-                    line = result.remaining();
+                } catch (RuntimeException exception) {
+                    System.out.printf("%s%s%n", PROMPT_ERR, exception.getMessage());
                 }
-
-                remaining = result.remaining();
 
                 System.out.print(PROMPT_IN);
             }
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
+
+        System.out.println("Done!");
     }
 }

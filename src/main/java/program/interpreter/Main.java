@@ -29,35 +29,24 @@ public final class Main {
             System.exit(1);
         }
 
-        try (BufferedReader reader = createBufferedFileReader(args[0])) {
-            String line, remaining = "";
-            while ((line = reader.readLine()) != null) {
-                if (!remaining.isEmpty()) {
-                    line = Strings.join(" ", asList(remaining, line));
-                }
-
-                Result<List<Expression>> result;
-                while ((result = Syntax.program().apply(line)).isSuccess()) {
-                    for (Expression expression : result.value()) {
-                        try {
-                            Expression evaluated = expression.eval(ENVIRONMENT_GLOBAL);
-                            if (Utilities.isNull(evaluated)) {
-                                /*NOP*/
-                            } else {
-                                System.out.printf("%s%n", evaluated);
-                            }
-                        } catch (RuntimeException exception) {
-                            System.out.printf("%s%n", exception.getMessage());
-                        }
+        try (ExpressionReader reader = new ExpressionReader(createBufferedFileReader(args[0]))) {
+            Expression expression;
+            while ((expression = reader.nextExpression()) != null) {
+                try {
+                    Expression evaluated = expression.eval(ENVIRONMENT_GLOBAL);
+                    if (Utilities.isNull(evaluated)) {
+                        /*NOP*/
+                    } else {
+                        System.out.printf("%s%n", evaluated);
                     }
-
-                    line = result.remaining();
+                } catch (RuntimeException exception) {
+                    System.out.printf("%s%s%n", exception.getMessage());
                 }
-
-                remaining = result.remaining();
             }
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
+
+        System.out.println("Done!");
     }
 }

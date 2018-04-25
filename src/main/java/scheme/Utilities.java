@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.Arrays.asList;
+
 public final class Utilities {
     public static SymbolExpression asSymbol(Expression expression) {
         if (expression instanceof SymbolExpression) {
@@ -74,7 +76,7 @@ public final class Utilities {
     }
 
     public static boolean isPair(Expression expression) {
-        return expression instanceof Pair;
+        return expression instanceof CombinationExpression || expression instanceof Pair;
     }
 
     public static boolean isNumber(Expression expression) {
@@ -83,6 +85,10 @@ public final class Utilities {
 
     public static boolean isString(Expression expression) {
         return expression instanceof StringExpression;
+    }
+
+    public static boolean isSymbol(Expression expression) {
+        return expression instanceof SymbolExpression;
     }
 
 
@@ -122,6 +128,10 @@ public final class Utilities {
 
     public static Expression makeQuote(Expression expression) {
         return QuoteExpression.make(expression);
+    }
+
+    public static Expression makeQuoteCombination(Expression expression) {
+        return CombinationExpression.make(asList(SymbolExpression.make("quote"), expression));
     }
 
     public static Expression makeLambda(List<Expression> expressions) {

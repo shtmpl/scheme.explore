@@ -121,6 +121,10 @@ public final class Core {
             (CombinationExpression arguments) -> length(arguments.expressions().get(0)));
 
 
+    public static final Procedure IS_SYMBOL = PrimitiveProcedure.make(
+            (CombinationExpression arguments) -> Utilities.isSymbol(arguments.expressions().get(0)) ? TRUE : FALSE);
+
+
     private static boolean isEq(Expression first, Expression other) {
         return Objects.equals(first, other);
     }
@@ -315,12 +319,16 @@ public final class Core {
                         new ExpressionReader(
                                 new BufferedReader(
                                         new InputStreamReader(
-                                                System.in)));
+                                                System.in)),
+                                Syntax.INTERPRETED_PROGRAM);
 
                 @Override
                 public Expression $(CombinationExpression arguments) {
                     try {
-                        return reader.nextExpression();
+                        Expression result = reader.nextExpression();
+//                        System.err.printf("%s: %s%n", result.getClass().getCanonicalName(), result);
+
+                        return result;
                     } catch (IOException exception) {
                         throw new RuntimeException(exception);
                     }

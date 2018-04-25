@@ -62,7 +62,13 @@ public final class Syntax {
                     Parsers.anyOf(
                             Parsers.after(
                                     Parsers.string("'"),
-                                    REF_EXPRESSION.parser()),
+                                    Parsers.anyOf(
+                                            EXPRESSION_FRACTIONAL,
+                                            EXPRESSION_INTEGRAL,
+                                            EXPRESSION_STRING,
+                                            EXPRESSION_SYMBOL,
+                                            EXPRESSION_UNIT,
+                                            EXPRESSION_COMBINATION)),
                             Parsers.parenthesised(
                                     Parsers.between(
                                             Parsers.optional(Parsers.whitespaces()),
@@ -70,8 +76,15 @@ public final class Syntax {
                                                     Parsers.string("quote"),
                                                     Parsers.after(
                                                             Parsers.whitespaces(),
-                                                            REF_EXPRESSION.parser())),
+                                                            Parsers.anyOf(
+                                                                    EXPRESSION_FRACTIONAL,
+                                                                    EXPRESSION_INTEGRAL,
+                                                                    EXPRESSION_STRING,
+                                                                    EXPRESSION_SYMBOL,
+                                                                    EXPRESSION_UNIT,
+                                                                    EXPRESSION_COMBINATION))),
                                             Parsers.optional(Parsers.whitespaces())))));
+
 
     static final Parser<Expression> EXPRESSION_LAMBDA =
             Parsers.as(
@@ -237,5 +250,70 @@ public final class Syntax {
                     Parsers.oneOrMoreSeparatedBy(
                             Parsers.whitespaces(),
                             EXPRESSION),
+                    Parsers.optional(Parsers.whitespaces()));
+
+
+    private static final Parser.Reference<Expression> REF_INTERPRETED = Parser.reference();
+
+    private static final Parser<Expression> INTERPRETED_COMBINATION =
+            Parsers.as(Utilities::makeCombination,
+                    Parsers.parenthesised(
+                            Parsers.between(
+                                    Parsers.optional(Parsers.whitespaces()),
+                                    Parsers.oneOrMoreSeparatedBy(
+                                            Parsers.whitespaces(),
+                                            REF_INTERPRETED.parser()),
+                                    Parsers.optional(Parsers.whitespaces()))));
+
+    private static final Parser<Expression> INTERPRETED_QUOTE =
+            Parsers.as(
+                    Utilities::makeQuoteCombination,
+                    Parsers.anyOf(
+                            Parsers.after(
+                                    Parsers.string("'"),
+                                    Parsers.anyOf(
+                                            EXPRESSION_FRACTIONAL,
+                                            EXPRESSION_INTEGRAL,
+                                            EXPRESSION_STRING,
+                                            EXPRESSION_SYMBOL,
+                                            EXPRESSION_UNIT,
+                                            INTERPRETED_COMBINATION)),
+                            Parsers.parenthesised(
+                                    Parsers.between(
+                                            Parsers.optional(Parsers.whitespaces()),
+                                            Parsers.after(
+                                                    Parsers.string("quote"),
+                                                    Parsers.after(
+                                                            Parsers.whitespaces(),
+                                                            Parsers.anyOf(
+                                                                    EXPRESSION_FRACTIONAL,
+                                                                    EXPRESSION_INTEGRAL,
+                                                                    EXPRESSION_STRING,
+                                                                    EXPRESSION_SYMBOL,
+                                                                    EXPRESSION_UNIT,
+                                                                    INTERPRETED_COMBINATION))),
+                                            Parsers.optional(Parsers.whitespaces())))));
+
+
+    public static final Parser<Expression> INTERPRETED =
+            Parsers.anyOf(
+                    EXPRESSION_FRACTIONAL,
+                    EXPRESSION_INTEGRAL,
+                    EXPRESSION_STRING,
+                    EXPRESSION_SYMBOL,
+                    EXPRESSION_UNIT,
+                    INTERPRETED_QUOTE,
+                    INTERPRETED_COMBINATION);
+
+    static {
+        REF_INTERPRETED.set(INTERPRETED);
+    }
+
+    public static final Parser<List<Expression>> INTERPRETED_PROGRAM =
+            Parsers.between(
+                    Parsers.optional(Parsers.whitespaces()),
+                    Parsers.oneOrMoreSeparatedBy(
+                            Parsers.whitespaces(),
+                            INTERPRETED),
                     Parsers.optional(Parsers.whitespaces()));
 }

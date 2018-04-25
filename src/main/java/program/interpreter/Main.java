@@ -29,7 +29,7 @@ public final class Main {
             System.exit(1);
         }
 
-        try (ExpressionReader reader = new ExpressionReader(createBufferedFileReader(args[0]))) {
+        try (ExpressionReader reader = new ExpressionReader(createBufferedFileReader(args[0]), Syntax.PROGRAM)) {
             Expression expression;
             while ((expression = reader.nextExpression()) != null) {
                 try {

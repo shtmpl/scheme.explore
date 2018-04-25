@@ -30,6 +30,8 @@ public class DefaultEnvironment implements Environment {
 
         PRIMITIVES.put(SymbolExpression.make("length"), Core.LENGTH);
 
+        PRIMITIVES.put(SymbolExpression.make("symbol?"), Core.IS_SYMBOL);
+
         PRIMITIVES.put(SymbolExpression.make("eq?"), Core.IS_EQ);
 
         PRIMITIVES.put(SymbolExpression.make("number?"), Core.IS_NUMBER);

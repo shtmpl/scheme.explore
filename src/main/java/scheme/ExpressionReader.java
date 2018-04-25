@@ -1,5 +1,6 @@
 package scheme;
 
+import scheme.syntax.Parser;
 import scheme.syntax.Result;
 
 import java.io.BufferedReader;
@@ -13,12 +14,14 @@ import java.util.Queue;
 import static java.util.Arrays.asList;
 
 public class ExpressionReader extends FilterReader {
+    private final Parser<List<Expression>> syntax;
     private final Queue<Expression> queue = new LinkedList<>();
 
     private String remaining = "";
 
-    public ExpressionReader(BufferedReader in) {
+    public ExpressionReader(BufferedReader in, Parser<List<Expression>> syntax) {
         super(in);
+        this.syntax = syntax;
     }
 
     public Expression nextExpression() throws IOException {
@@ -33,7 +36,7 @@ public class ExpressionReader extends FilterReader {
             }
 
             Result<List<Expression>> result;
-            while ((result = Syntax.PROGRAM.apply(line)).isSuccess()) {
+            while ((result = syntax.apply(line)).isSuccess()) {
                 for (Expression expression : result.value()) {
                     queue.offer(expression);
                 }

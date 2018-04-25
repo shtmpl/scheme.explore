@@ -18,7 +18,7 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        try (ExpressionReader reader = new ExpressionReader(createBufferedStdinReader())) {
+        try (ExpressionReader reader = new ExpressionReader(createBufferedStdinReader(), Syntax.PROGRAM)) {
             System.out.print(PROMPT_IN);
 
             Expression expression;

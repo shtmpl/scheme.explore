@@ -104,6 +104,20 @@ public final class Core {
             (CombinationExpression arguments) -> arguments);
 
 
+    private static IntegralExpression length(Expression expression) {
+        if (Utilities.isNull(expression)) {
+            return IntegralExpression.make((long) 0);
+        } else if (Utilities.isList(expression)) {
+            return IntegralExpression.make((long) Utilities.asCombination(expression).expressions().size());
+        }
+
+        throw new RuntimeException("Malformed list");
+    }
+
+    public static final Procedure LENGTH = PrimitiveProcedure.make(
+            (CombinationExpression arguments) -> length(arguments.expressions().get(0)));
+
+
     private static boolean isEq(Expression first, Expression other) {
         return Objects.equals(first, other);
     }

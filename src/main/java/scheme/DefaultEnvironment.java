@@ -28,6 +28,8 @@ public class DefaultEnvironment implements Environment {
         PRIMITIVES.put(SymbolExpression.make("list?"), Core.IS_LIST);
         PRIMITIVES.put(SymbolExpression.make("list"), Core.LIST);
 
+        PRIMITIVES.put(SymbolExpression.make("length"), Core.LENGTH);
+
         PRIMITIVES.put(SymbolExpression.make("eq?"), Core.IS_EQ);
 
         PRIMITIVES.put(SymbolExpression.make("<"), Core.LESS_THAN);

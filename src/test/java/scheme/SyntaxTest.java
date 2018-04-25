@@ -377,7 +377,6 @@ public class SyntaxTest {
                 Syntax.EXPRESSION_COND.apply("(cond ((< x 0) (set! x 0) x) (else 42))"),
                 "",
                 "(cond ((< x 0) (set! x 0) x) (else 42))");
-
         assertSuccess(
                 Syntax.EXPRESSION_COND.apply("(  cond  (  (  <  x  0  )  (  set!  x  0  )  x  )  (  else  42  )  )"),
                 "",
@@ -386,5 +385,53 @@ public class SyntaxTest {
                 Syntax.EXPRESSION_COND.apply("(\ncond\n(\n(\n<\nx\n0\n)\n(\nset!\nx\n0\n)\nx\n)\n(\nelse\n42\n)\n)"),
                 "",
                 "(cond ((< x 0) (set! x 0) x) (else 42))");
+    }
+
+    @Test
+    public void shouldAllowToParseLet() throws Exception {
+        assertSuccess(
+                Syntax.EXPRESSION_LET.apply("(let ((x 42)) x)"),
+                "",
+                "(let ((x 42)) x)");
+        assertSuccess(
+                Syntax.EXPRESSION_LET.apply("(  let  (  (  x  42  )  )  x  )"),
+                "",
+                "(let ((x 42)) x)");
+        assertSuccess(
+                Syntax.EXPRESSION_LET.apply("(\nlet\n(\n(\nx\n42\n)\n)\nx\n)"),
+                "",
+                "(let ((x 42)) x)");
+
+        assertSuccess(
+                Syntax.EXPRESSION_LET.apply("(let ((x 0) (y 1)) (+ x y))"),
+                "",
+                "(let ((x 0) (y 1)) (+ x y))");
+        assertSuccess(
+                Syntax.EXPRESSION_LET.apply("(  let  (  (  x  0  )  (  y  1  )  )  (  +  x  y  )  )"),
+                "",
+                "(let ((x 0) (y 1)) (+ x y))");
+        assertSuccess(
+                Syntax.EXPRESSION_LET.apply("(\nlet\n(\n(\nx\n0\n)\n(\ny\n1\n)\n)\n(\n+\nx\ny\n)\n)"),
+                "",
+                "(let ((x 0) (y 1)) (+ x y))");
+
+        assertSuccess(
+                Syntax.EXPRESSION_LET.apply("(let ((x 0) (y 1)) (set! x y) (+ x y))"),
+                "",
+                "(let ((x 0) (y 1)) (set! x y) (+ x y))");
+        assertSuccess(
+                Syntax.EXPRESSION_LET.apply("(  let  (  (  x  0  )  (  y  1  )  )  (  set!  x  y  )  (  +  x  y  )  )"),
+                "",
+                "(let ((x 0) (y 1)) (set! x y) (+ x y))");
+        assertSuccess(
+                Syntax.EXPRESSION_LET.apply("(\nlet\n(\n(\nx\n0\n)\n(\ny\n1\n)\n)\n(\nset!\nx\ny\n)\n(\n+\nx\ny\n)\n)"),
+                "",
+                "(let ((x 0) (y 1)) (set! x y) (+ x y))");
+    }
+
+    @Test
+    public void shouldAllowToParseExpression() throws Exception {
+//        Expression x = Syntax.EXPRESSION.apply("(let ((x 1)) (foo) x bar)").value();
+//        System.out.printf("%s: %s%n", x.getClass().getSimpleName(), x);
     }
 }

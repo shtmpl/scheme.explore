@@ -189,6 +189,26 @@ public final class Syntax {
                                                             REF_EXPRESSION.parser()))),
                                     Parsers.optional(Parsers.whitespaces()))));
 
+    static final Parser<Expression> EXPRESSION_LET =
+            Parsers.as(
+                    Utilities::makeLet,
+                    Parsers.parenthesised(
+                            Parsers.between(
+                                    Parsers.optional(Parsers.whitespaces()),
+                                    Parsers.after(
+                                            Parsers.string("let"),
+                                            Parsers.after(
+                                                    Parsers.whitespaces(),
+                                                    Parsers.separatedBy(
+                                                            Parsers.whitespaces(),
+                                                            EXPRESSION_COMBINATION,
+                                                            Parsers.as(
+                                                                    Utilities::makeCombination,
+                                                                    Parsers.oneOrMoreSeparatedBy(
+                                                                            Parsers.whitespaces(),
+                                                                            REF_EXPRESSION.parser()))))),
+                                    Parsers.optional(Parsers.whitespaces()))));
+
     static final Parser<Expression> EXPRESSION =
             Parsers.anyOf(
                     EXPRESSION_FRACTIONAL,
@@ -203,6 +223,7 @@ public final class Syntax {
                     EXPRESSION_BEGIN,
                     EXPRESSION_IF,
                     EXPRESSION_COND,
+                    EXPRESSION_LET,
                     EXPRESSION_COMBINATION);
 
     static {

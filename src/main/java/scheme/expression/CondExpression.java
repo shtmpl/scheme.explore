@@ -7,7 +7,6 @@ import scheme.Strings;
 
 import java.util.List;
 
-import static java.util.Arrays.asList;
 import static scheme.Core.FALSE;
 
 public class CondExpression implements Expression {
@@ -47,7 +46,7 @@ public class CondExpression implements Expression {
                 expand(rest));
     }
 
-    public Expression toIfExpression() {
+    private Expression toIfExpression() {
         return expand(clauses);
     }
 

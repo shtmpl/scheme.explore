@@ -15,6 +15,15 @@ public final class Utilities {
         throw new RuntimeException(String.format("Not a symbol: %s", expression));
     }
 
+    public static List<SymbolExpression> mapAsSymbol(List<Expression> expressions) {
+        List<SymbolExpression> result = new ArrayList<>(expressions.size());
+        for (Expression expression : expressions) {
+            result.add(asSymbol(expression));
+        }
+
+        return result;
+    }
+
     public static Pair asPair(Expression expression) {
         if (expression instanceof Pair) {
             return (Pair) expression;
@@ -29,6 +38,15 @@ public final class Utilities {
         }
 
         throw new RuntimeException(String.format("Not a combination: %s", expression));
+    }
+
+    public static List<CombinationExpression> mapAsCombination(List<Expression> expressions) {
+        List<CombinationExpression> result = new ArrayList<>(expressions.size());
+        for (Expression expression : expressions) {
+            result.add(asCombination(expression));
+        }
+
+        return result;
     }
 
     public static Procedure asProcedure(Expression expression) {
@@ -152,5 +170,11 @@ public final class Utilities {
 
     public static Expression makeCond(List<Expression> expressions) {
         return CondExpression.make(expressions.stream().map(Utilities::asCombination).collect(Collectors.toList()));
+    }
+
+    public static Expression makeLet(List<Expression> expressions) {
+        return LetExpression.make(
+                mapAsCombination(asCombination(expressions.get(0)).expressions()),
+                asCombination(expressions.get(1)).expressions());
     }
 }

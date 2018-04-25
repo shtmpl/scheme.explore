@@ -3,6 +3,9 @@ package scheme;
 import scheme.expression.*;
 import scheme.procedure.PrimitiveProcedure;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 
 public final class Core {
@@ -305,6 +308,25 @@ public final class Core {
                 System.out.println();
                 return UNIT;
             });
+
+    public static final Procedure READ = PrimitiveProcedure.make(
+            new PrimitiveProcedure.Implementation() {
+                private final ExpressionReader reader =
+                        new ExpressionReader(
+                                new BufferedReader(
+                                        new InputStreamReader(
+                                                System.in)));
+
+                @Override
+                public Expression $(CombinationExpression arguments) {
+                    try {
+                        return reader.nextExpression();
+                    } catch (IOException exception) {
+                        throw new RuntimeException(exception);
+                    }
+                };
+            }
+    );
 
 
     public static Expression eval(Expression expression, Environment environment) {

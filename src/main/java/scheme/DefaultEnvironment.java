@@ -51,6 +51,8 @@ public class DefaultEnvironment implements Environment {
 
         PRIMITIVES.put(SymbolExpression.make("display"), Core.DISPLAY);
         PRIMITIVES.put(SymbolExpression.make("newline"), Core.NEWLINE);
+
+        PRIMITIVES.put(SymbolExpression.make("read"), Core.READ);
     }
 
 

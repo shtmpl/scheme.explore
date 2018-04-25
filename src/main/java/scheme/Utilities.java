@@ -133,11 +133,15 @@ public final class Utilities {
         return AssignmentExpression.make(asSymbol(expressions.get(0)), expressions.get(1));
     }
 
-    public static Expression makeIfExpression(List<Expression> expressions) {
+    public static Expression makeBegin(List<Expression> expressions) {
+        return BeginExpression.make(expressions);
+    }
+
+    public static Expression makeIf(List<Expression> expressions) {
         return IfExpression.make(expressions.get(0), expressions.get(1), expressions.get(2));
     }
 
-    public static Expression makeBeginExpression(List<Expression> expressions) {
-        return BeginExpression.make(expressions);
+    public static Expression makeCond(List<Expression> expressions) {
+        return CondExpression.make(expressions.stream().map(Utilities::asCombination).collect(Collectors.toList()));
     }
 }

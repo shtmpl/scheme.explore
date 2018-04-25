@@ -288,6 +288,35 @@ public class SyntaxTest {
     }
 
     @Test
+    public void shouldAllowToParseBegin() throws Exception {
+        assertSuccess(
+                Syntax.EXPRESSION_BEGIN.apply("(begin 42)"),
+                "",
+                "(begin 42)");
+        assertSuccess(
+                Syntax.EXPRESSION_BEGIN.apply("(  begin  42  )"),
+                "",
+                "(begin 42)");
+        assertSuccess(
+                Syntax.EXPRESSION_BEGIN.apply("(\nbegin\n42\n)"),
+                "",
+                "(begin 42)");
+
+        assertSuccess(
+                Syntax.EXPRESSION_BEGIN.apply("(begin (set! x 42) x)"),
+                "",
+                "(begin (set! x 42) x)");
+        assertSuccess(
+                Syntax.EXPRESSION_BEGIN.apply("(  begin  (  set!  x  42  )  x  )"),
+                "",
+                "(begin (set! x 42) x)");
+        assertSuccess(
+                Syntax.EXPRESSION_BEGIN.apply("(\nbegin\n(\nset!\nx\n42\n)\nx\n)"),
+                "",
+                "(begin (set! x 42) x)");
+    }
+
+    @Test
     public void shouldAllowToParseIf() throws Exception {
         assertSuccess(
                 Syntax.EXPRESSION_IF.apply("(if 42 x y)"),
@@ -317,31 +346,45 @@ public class SyntaxTest {
     }
 
     @Test
-    public void shouldAllowToParseBegin() throws Exception {
+    public void shouldAllowToParseCond() throws Exception {
         assertSuccess(
-                Syntax.EXPRESSION_BEGIN.apply("(begin 42)"),
+                Syntax.EXPRESSION_COND.apply("(cond (else 42))"),
                 "",
-                "(begin 42)");
+                "(cond (else 42))");
         assertSuccess(
-                Syntax.EXPRESSION_BEGIN.apply("(  begin  42  )"),
+                Syntax.EXPRESSION_COND.apply("(  cond  (  else  42  )  )"),
                 "",
-                "(begin 42)");
+                "(cond (else 42))");
         assertSuccess(
-                Syntax.EXPRESSION_BEGIN.apply("(\nbegin\n42\n)"),
+                Syntax.EXPRESSION_COND.apply("(\ncond\n(\nelse\n42\n)\n)"),
                 "",
-                "(begin 42)");
+                "(cond (else 42))");
 
         assertSuccess(
-                Syntax.EXPRESSION_BEGIN.apply("(begin (set! x 42) x)"),
+                Syntax.EXPRESSION_COND.apply("(cond ((< x 42) x) (else 42))"),
                 "",
-                "(begin (set! x 42) x)");
+                "(cond ((< x 42) x) (else 42))");
         assertSuccess(
-                Syntax.EXPRESSION_BEGIN.apply("(  begin  (  set!  x  42  )  x  )"),
+                Syntax.EXPRESSION_COND.apply("(  cond  (  (  <  x  42  )  x  )  (  else  42  )  )"),
                 "",
-                "(begin (set! x 42) x)");
+                "(cond ((< x 42) x) (else 42))");
         assertSuccess(
-                Syntax.EXPRESSION_BEGIN.apply("(\nbegin\n(\nset!\nx\n42\n)\nx\n)"),
+                Syntax.EXPRESSION_COND.apply("(\ncond\n(\n(\n<\nx\n42\n)\nx\n)\n(\nelse\n42\n)\n)"),
                 "",
-                "(begin (set! x 42) x)");
+                "(cond ((< x 42) x) (else 42))");
+
+        assertSuccess(
+                Syntax.EXPRESSION_COND.apply("(cond ((< x 0) (set! x 0) x) (else 42))"),
+                "",
+                "(cond ((< x 0) (set! x 0) x) (else 42))");
+
+        assertSuccess(
+                Syntax.EXPRESSION_COND.apply("(  cond  (  (  <  x  0  )  (  set!  x  0  )  x  )  (  else  42  )  )"),
+                "",
+                "(cond ((< x 0) (set! x 0) x) (else 42))");
+        assertSuccess(
+                Syntax.EXPRESSION_COND.apply("(\ncond\n(\n(\n<\nx\n0\n)\n(\nset!\nx\n0\n)\nx\n)\n(\nelse\n42\n)\n)"),
+                "",
+                "(cond ((< x 0) (set! x 0) x) (else 42))");
     }
 }

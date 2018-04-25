@@ -142,9 +142,24 @@ public final class Syntax {
                                                             REF_EXPRESSION.parser()))),
                                     Parsers.optional(Parsers.whitespaces()))));
 
+    static final Parser<Expression> EXPRESSION_BEGIN =
+            Parsers.as(
+                    Utilities::makeBegin,
+                    Parsers.parenthesised(
+                            Parsers.between(
+                                    Parsers.optional(Parsers.whitespaces()),
+                                    Parsers.after(
+                                            Parsers.string("begin"),
+                                            Parsers.after(
+                                                    Parsers.whitespaces(),
+                                                    Parsers.oneOrMoreSeparatedBy(
+                                                            Parsers.whitespaces(),
+                                                            REF_EXPRESSION.parser()))),
+                                    Parsers.optional(Parsers.whitespaces()))));
+
     static final Parser<Expression> EXPRESSION_IF =
             Parsers.as(
-                    Utilities::makeIfExpression,
+                    Utilities::makeIf,
                     Parsers.parenthesised(
                             Parsers.between(
                                     Parsers.optional(Parsers.whitespaces()),
@@ -159,14 +174,14 @@ public final class Syntax {
                                                             REF_EXPRESSION.parser()))),
                                     Parsers.optional(Parsers.whitespaces()))));
 
-    static final Parser<Expression> EXPRESSION_BEGIN =
+    static final Parser<Expression> EXPRESSION_COND =
             Parsers.as(
-                    Utilities::makeBeginExpression,
+                    Utilities::makeCond,
                     Parsers.parenthesised(
                             Parsers.between(
                                     Parsers.optional(Parsers.whitespaces()),
                                     Parsers.after(
-                                            Parsers.string("begin"),
+                                            Parsers.string("cond"),
                                             Parsers.after(
                                                     Parsers.whitespaces(),
                                                     Parsers.oneOrMoreSeparatedBy(
@@ -185,8 +200,9 @@ public final class Syntax {
                     EXPRESSION_LAMBDA,
                     EXPRESSION_DEFINITION,
                     EXPRESSION_ASSIGNMENT,
-                    EXPRESSION_IF,
                     EXPRESSION_BEGIN,
+                    EXPRESSION_IF,
+                    EXPRESSION_COND,
                     EXPRESSION_COMBINATION);
 
     static {

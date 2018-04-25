@@ -3,14 +3,36 @@
       '()
       (cons (f (car xs)) (map f (cdr xs)))))
 
+(define (caar xs) (car (car xs)))
 (define (cadr xs) (car (cdr xs)))
+(define (cdar xs) (cdr (car xs)))
 (define (cddr xs) (cdr (cdr xs)))
 
+(define (caaar xs) (car (car (car xs))))
+(define (caadr xs) (car (car (cdr xs))))
+(define (cadar xs) (car (cdr (car xs))))
 (define (caddr xs) (car (cdr (cdr xs))))
+(define (cdaar xs) (cdr (car (car xs))))
 (define (cdadr xs) (cdr (car (cdr xs))))
+(define (cddar xs) (cdr (cdr (car xs))))
 (define (cdddr xs) (cdr (cdr (cdr xs))))
 
+(define (caaaar xs) (car (car (car (car xs)))))
+(define (caaadr xs) (car (car (car (cdr xs)))))
+(define (caadar xs) (car (car (cdr (car xs)))))
+(define (caaddr xs) (car (car (cdr (cdr xs)))))
+(define (cadaar xs) (car (cdr (car (car xs)))))
+(define (cadadr xs) (car (cdr (car (cdr xs)))))
+(define (caddar xs) (car (cdr (cdr (car xs)))))
 (define (cadddr xs) (car (cdr (cdr (cdr xs)))))
+(define (cdaaar xs) (cdr (car (car (car xs)))))
+(define (cdaadr xs) (cdr (car (car (cdr xs)))))
+(define (cdadar xs) (cdr (car (cdr (car xs)))))
+(define (cdaddr xs) (cdr (car (cdr (cdr xs)))))
+(define (cddaar xs) (cdr (cdr (car (car xs)))))
+(define (cddadr xs) (cdr (cdr (car (cdr xs)))))
+(define (cdddar xs) (cdr (cdr (cdr (car xs)))))
+(define (cddddr xs) (cdr (cdr (cdr (cdr xs)))))
 
 
 
@@ -96,6 +118,12 @@
                     (eval (definition-value exp) env)
                     env)
   'ok)
+
+(define (true? x)
+  (not (eq? x false)))
+
+(define (false? x)
+  (eq? x false))
 
 (define (tagged-list? exp tag)
   (if (pair? exp)
@@ -224,15 +252,47 @@
 
 
 (define primitive-procedures
-  (list (list 'eq? eq?)
+  (list (list 'not not)
+
+        (list 'error error)
+
+        (list 'apply apply)
+
+        (list 'null? null?)
+
+        (list 'pair? pair?
+        (list 'cons cons)
         (list 'car car)
         (list 'cdr cdr)
-        (list 'cons cons)
-        (list 'null? null?)
+        (list 'set-car!)
+        (list 'set-cdr!)
+
+        (list 'list? list?)
+        (list 'list list)
+
+        (list 'length length)
+
+        (list 'symbol? symbol?)
+
+        (list 'eq? eq?)
+
+        (list 'number? number?)
+
+        (list '< <)
+        (list '<= <=)
+        (list '= =)
+        (list '>= >=)
+        (list '> >)
+
         (list '+ +)
         (list '- -)
         (list '* *)
-        (list '/ /)))
+        (list '/ /)
+
+        (list 'string? string?)
+
+        (list 'display display)
+        (list 'newline newline))))
 
 (define (primitive-procedure-names)
   (map car primitive-procedures))

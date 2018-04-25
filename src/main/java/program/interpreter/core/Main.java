@@ -1,4 +1,4 @@
-package program.interpreter.interactive;
+package program.interpreter.core;
 
 import scheme.*;
 
@@ -13,12 +13,12 @@ public class Main {
     private static final String PROMPT_OUT = "=> ";
     private static final String PROMPT_ERR = "~> ";
 
-    private static BufferedReader createBufferedStdinReader() {
-        return new BufferedReader(new InputStreamReader(System.in));
-    }
-
     public static void main(String[] args) {
-        try (ExpressionReader reader = new ExpressionReader(createBufferedStdinReader(), Syntax.PROGRAM)) {
+        try (ExpressionReader reader =
+                     new ExpressionReader(
+                             new BufferedReader(
+                                     new InputStreamReader(System.in)),
+                             Syntax.PROGRAM)) {
             System.out.print(PROMPT_IN);
 
             Expression expression;

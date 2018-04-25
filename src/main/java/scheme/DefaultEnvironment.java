@@ -11,6 +11,7 @@ public class DefaultEnvironment implements Environment {
     static {
         PRIMITIVES.put(SymbolExpression.make("true"), Core.TRUE);
         PRIMITIVES.put(SymbolExpression.make("false"), Core.FALSE);
+        PRIMITIVES.put(SymbolExpression.make("not"), Core.NOT);
 
         PRIMITIVES.put(SymbolExpression.make("error"), Core.ERROR);
 

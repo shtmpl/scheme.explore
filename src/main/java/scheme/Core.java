@@ -14,7 +14,8 @@ public final class Core {
     public static final Expression FALSE = SymbolExpression.make("false");
     public static final Expression TRUE = SymbolExpression.make("true");
 
-
+    public static final Procedure NOT = PrimitiveProcedure.make(
+            (CombinationExpression arguments) -> Utilities.isTrue(arguments.expressions().get(0)) ? FALSE : TRUE);
 
 
     private static String toStringUnquoted(Expression expression) {

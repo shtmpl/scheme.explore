@@ -8,8 +8,8 @@ public class Pair implements Expression {
     }
 
 
-    private final Expression car;
-    private final Expression cdr;
+    private Expression car;
+    private Expression cdr;
 
     protected Pair(Expression car, Expression cdr) {
         this.car = car;
@@ -20,8 +20,16 @@ public class Pair implements Expression {
         return car;
     }
 
+    public void car(Expression expression) {
+        car = expression;
+    }
+
     public Expression cdr() {
         return cdr;
+    }
+
+    public void cdr(Expression expression) {
+        cdr = expression;
     }
 
     @Override

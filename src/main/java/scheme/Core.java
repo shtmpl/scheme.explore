@@ -11,14 +11,7 @@ public final class Core {
     public static final Expression FALSE = SymbolExpression.make("false");
     public static final Expression TRUE = SymbolExpression.make("true");
 
-    public static final Procedure IS_NULL = PrimitiveProcedure.make(
-            (CombinationExpression arguments) -> {
-                if (Utilities.isNull(arguments.expressions().get(0))) {
-                    return TRUE;
-                }
 
-                return FALSE;
-            });
 
 
     private static String toStringUnquoted(Expression expression) {
@@ -53,6 +46,14 @@ public final class Core {
                 return procedure.apply(args);
             });
 
+
+    public static final Procedure IS_NULL = PrimitiveProcedure.make(
+            (CombinationExpression arguments) -> Utilities.isNull(arguments.expressions().get(0)) ? TRUE : FALSE);
+
+
+    public static final Procedure IS_PAIR = PrimitiveProcedure.make(
+            (CombinationExpression arguments) -> Utilities.isPair(arguments.expressions().get(0)) ? TRUE : FALSE);
+
     private static <X> List<X> cons(X x, List<X> rest) {
         List<X> result = new LinkedList<>();
         result.add(x);
@@ -82,8 +83,22 @@ public final class Core {
     public static final Procedure CDR = PrimitiveProcedure.make(
             (CombinationExpression arguments) -> Utilities.asPair(arguments.expressions().get(0)).cdr());
 
-    public static final Procedure IS_PAIR = PrimitiveProcedure.make(
-            (CombinationExpression arguments) -> Utilities.isPair(arguments.expressions().get(0)) ? TRUE : FALSE);
+    public static final Procedure SET_CAR = PrimitiveProcedure.make(
+            (CombinationExpression arguments) -> {
+                Utilities.asPair(arguments.expressions().get(0)).car(arguments.expressions().get(1));
+                return UnitExpression.make();
+            });
+
+    public static final Procedure SET_CDR = PrimitiveProcedure.make(
+            (CombinationExpression arguments) -> {
+                Utilities.asPair(arguments.expressions().get(0)).cdr(arguments.expressions().get(1));
+                return UnitExpression.make();
+            });
+
+
+
+    public static final Procedure IS_LIST = PrimitiveProcedure.make(
+            (CombinationExpression arguments) -> Utilities.isList(arguments.expressions().get(0)) ? TRUE : FALSE);
 
     public static final Procedure LIST = PrimitiveProcedure.make(
             (CombinationExpression arguments) -> arguments);

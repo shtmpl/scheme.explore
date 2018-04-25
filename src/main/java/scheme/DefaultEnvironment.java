@@ -9,8 +9,6 @@ public class DefaultEnvironment implements Environment {
     private static final Map<SymbolExpression, Expression> PRIMITIVES = new HashMap<>();
 
     static {
-        PRIMITIVES.put(SymbolExpression.make("null?"), Core.IS_NULL);
-
         PRIMITIVES.put(SymbolExpression.make("true"), Core.TRUE);
         PRIMITIVES.put(SymbolExpression.make("false"), Core.FALSE);
 
@@ -18,10 +16,16 @@ public class DefaultEnvironment implements Environment {
 
         PRIMITIVES.put(SymbolExpression.make("apply"), Core.APPLY);
 
+        PRIMITIVES.put(SymbolExpression.make("null?"), Core.IS_NULL);
+
+        PRIMITIVES.put(SymbolExpression.make("pair?"), Core.IS_PAIR);
         PRIMITIVES.put(SymbolExpression.make("cons"), Core.CONS);
         PRIMITIVES.put(SymbolExpression.make("car"), Core.CAR);
         PRIMITIVES.put(SymbolExpression.make("cdr"), Core.CDR);
-        PRIMITIVES.put(SymbolExpression.make("pair?"), Core.IS_PAIR);
+        PRIMITIVES.put(SymbolExpression.make("set-car!"), Core.SET_CAR);
+        PRIMITIVES.put(SymbolExpression.make("set-cdr!"), Core.SET_CDR);
+
+        PRIMITIVES.put(SymbolExpression.make("list?"), Core.IS_LIST);
         PRIMITIVES.put(SymbolExpression.make("list"), Core.LIST);
 
         PRIMITIVES.put(SymbolExpression.make("eq?"), Core.IS_EQ);

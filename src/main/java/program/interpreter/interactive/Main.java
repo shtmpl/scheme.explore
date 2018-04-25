@@ -25,11 +25,7 @@ public class Main {
             while ((expression = reader.nextExpression()) != null) {
                 try {
                     Expression evaluated = expression.eval(ENVIRONMENT_GLOBAL);
-                    if (Utilities.isNull(evaluated)) {
-                        /*NOP*/
-                    } else {
-                        System.out.printf("%s%s%n", PROMPT_OUT, evaluated);
-                    }
+                    System.out.printf("%s%s%n", PROMPT_OUT, evaluated);
                 } catch (RuntimeException exception) {
                     System.out.printf("%s%s%n", PROMPT_ERR, exception.getMessage());
                 }

@@ -2,50 +2,79 @@ package scheme;
 
 import scheme.expression.UnitExpression;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
-public class CombinationExpression implements Expression {
+public class CombinationExpression extends Pair {
+    private static CombinationExpression makeRecursively(List<Expression> expressions) {
+        if (expressions.isEmpty()) {
+            return UnitExpression.make();
+        }
+
+        return new CombinationExpression(expressions.get(0), makeRecursively(expressions.subList(1, expressions.size())));
+    }
+
+    private static CombinationExpression makeIteratively(List<Expression> expressions) {
+        CombinationExpression result = UnitExpression.make();
+
+        if (expressions.isEmpty()) {
+            return result;
+        }
+
+        ListIterator<Expression> it = expressions.listIterator(expressions.size());
+        while (it.hasPrevious()) {
+            Expression expression = it.previous();
+            result = new CombinationExpression(expression, result);
+        }
+
+        return result;
+    }
+
     public static CombinationExpression make(List<Expression> expressions) {
-        return new CombinationExpression(expressions);
+        return makeIteratively(expressions);
     }
 
 
-    private final List<Expression> expressions;
+    protected CombinationExpression(Expression car, CombinationExpression cdr) {
+        super(car, cdr);
+    }
 
-    private CombinationExpression(List<Expression> expressions) {
-        this.expressions = expressions;
+    @Override
+    public Expression car() {
+        return super.car();
+    }
+
+    @Override
+    public CombinationExpression cdr() {
+        return (CombinationExpression) super.cdr();
     }
 
     public List<Expression> expressions() {
-        return expressions;
-    }
+        List<Expression> result = new LinkedList<>();
+        result.add(car());
 
-    public Expression car() {
-        return expressions.get(0);
-    }
+        CombinationExpression rest = cdr();
+        while (!Utilities.isNull(rest)) {
+            result.add(rest.car());
+            rest = rest.cdr();
+        }
 
-    public Expression cdr() {
-        return expressions.size() < 2
-                ? UnitExpression.make()
-                : CombinationExpression.make(expressions.subList(1, expressions.size()));
+        return result;
     }
 
     @Override
     public Expression eval(Environment environment) {
-        Procedure operator = Utilities.asProcedure(expressions.get(0).eval(environment));
+        Procedure operator = Utilities.asProcedure(car().eval(environment));
 
         List<Expression> evaluated = new ArrayList<>();
-        for (Expression expression : expressions.subList(1, expressions.size())) {
+        for (Expression expression : cdr().expressions()) {
             evaluated.add(expression.eval(environment));
         }
 
-        return operator.apply(CombinationExpression.make(evaluated));
+        return operator.apply(make(evaluated));
     }
 
     @Override
     public String toString() {
-        return String.format("(%s)", Strings.join(" ", expressions));
+        return String.format("(%s)", Strings.join(" ", expressions()));
     }
 }

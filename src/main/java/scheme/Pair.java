@@ -1,14 +1,17 @@
-package scheme.structure;
+package scheme;
 
-import scheme.Core;
-import scheme.Environment;
-import scheme.Expression;
+import java.util.List;
 
 public class Pair implements Expression {
+    public static Pair make(List<Expression> expressions) {
+        return new Pair(expressions.get(0), expressions.get(1));
+    }
+
+
     private final Expression car;
     private final Expression cdr;
 
-    public Pair(Expression car, Expression cdr) {
+    protected Pair(Expression car, Expression cdr) {
         this.car = car;
         this.cdr = cdr;
     }
@@ -23,7 +26,7 @@ public class Pair implements Expression {
 
     @Override
     public Expression eval(Environment environment) {
-        return this;
+        throw new UnsupportedOperationException("Evaluation is not supported");
     }
 
     @Override

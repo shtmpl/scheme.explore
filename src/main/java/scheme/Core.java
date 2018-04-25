@@ -2,13 +2,8 @@ package scheme;
 
 import scheme.expression.*;
 import scheme.procedure.PrimitiveProcedure;
-import scheme.structure.Pair;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
-import static java.util.Arrays.asList;
+import java.util.*;
 
 public final class Core {
     public static final Expression UNIT = UnitExpression.make();
@@ -58,15 +53,34 @@ public final class Core {
                 return procedure.apply(args);
             });
 
+    private static <X> List<X> cons(X x, List<X> rest) {
+        List<X> result = new LinkedList<>();
+        result.add(x);
+        result.addAll(rest);
+
+        return result;
+    }
 
     public static final Procedure CONS = PrimitiveProcedure.make(
-            (CombinationExpression arguments) -> arguments);
+            (CombinationExpression arguments) -> {
+                List<Expression> expressions = arguments.expressions();
+
+                Expression car = expressions.get(0);
+                Expression cdr = expressions.get(1);
+                if (Utilities.isNull(cdr)) {
+                    return CombinationExpression.make(cons(car, Collections.emptyList()));
+                } else if (Utilities.isList(cdr)) {
+                    return CombinationExpression.make(cons(car, Utilities.asCombination(cdr).expressions()));
+                }
+
+                return Pair.make(expressions);
+            });
 
     public static final Procedure CAR = PrimitiveProcedure.make(
-            (CombinationExpression arguments) -> Utilities.asCombinationExpression(arguments.expressions().get(0)).car());
+            (CombinationExpression arguments) -> Utilities.asPair(arguments.expressions().get(0)).car());
 
     public static final Procedure CDR = PrimitiveProcedure.make(
-            (CombinationExpression arguments) -> Utilities.asCombinationExpression(arguments.expressions().get(0)).cdr());
+            (CombinationExpression arguments) -> Utilities.asPair(arguments.expressions().get(0)).cdr());
 
     public static final Procedure IS_PAIR = PrimitiveProcedure.make(
             (CombinationExpression arguments) -> Utilities.isPair(arguments.expressions().get(0)) ? TRUE : FALSE);

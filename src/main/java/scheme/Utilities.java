@@ -1,14 +1,13 @@
 package scheme;
 
 import scheme.expression.*;
-import scheme.structure.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public final class Utilities {
-    public static SymbolExpression asSymbolExpression(Expression expression) {
+    public static SymbolExpression asSymbol(Expression expression) {
         if (expression instanceof SymbolExpression) {
             return (SymbolExpression) expression;
         }
@@ -16,7 +15,15 @@ public final class Utilities {
         throw new RuntimeException(String.format("Not a symbol: %s", expression));
     }
 
-    public static CombinationExpression asCombinationExpression(Expression expression) {
+    public static Pair asPair(Expression expression) {
+        if (expression instanceof Pair) {
+            return (Pair) expression;
+        }
+
+        throw new RuntimeException(String.format("Not a pair: %s", expression));
+    }
+
+    public static CombinationExpression asCombination(Expression expression) {
         if (expression instanceof CombinationExpression) {
             return (CombinationExpression) expression;
         }
@@ -44,8 +51,12 @@ public final class Utilities {
         return Core.UNIT.equals(expression);
     }
 
-    public static boolean isPair(Expression expression) {
+    public static boolean isList(Expression expression) {
         return expression instanceof CombinationExpression;
+    }
+
+    public static boolean isPair(Expression expression) {
+        return expression instanceof Pair;
     }
 
     public static List<Expression> mapEval(List<Expression> expressions, Environment environment) {
@@ -58,68 +69,68 @@ public final class Utilities {
     }
 
 
-    public static Expression makeUnitExpression(String x) {
+    public static Expression makeUnit(String x) {
         return UnitExpression.make();
     }
 
-    public static Expression makeIntegralExpression(String x) {
+    public static Expression makeIntegral(String x) {
         return IntegralExpression.make(Long.valueOf(x));
     }
 
-    public static Expression makeFractionalExpression(String x) {
+    public static Expression makeFractional(String x) {
         return FractionalExpression.make(Double.valueOf(x));
     }
 
-    public static Expression makeStringExpression(String x) {
+    public static Expression makeString(String x) {
         return StringExpression.make(x);
     }
 
-    public static Expression makeSymbolExpression(String x) {
+    public static Expression makeSymbol(String x) {
         return SymbolExpression.make(x);
     }
 
-    public static Expression makeCombinationExpression(List<Expression> expressions) {
+    public static Expression makeCombination(List<Expression> expressions) {
         return CombinationExpression.make(expressions);
     }
 
-    public static Expression makeQuoteExpression(Expression expression) {
+    public static Expression makeQuote(Expression expression) {
         return QuoteExpression.make(expression);
     }
 
-    public static Expression makeLambdaExpression(List<Expression> expressions) {
+    public static Expression makeLambda(List<Expression> expressions) {
         return LambdaExpression.make(
-                asCombinationExpression(expressions.get(0))
+                asCombination(expressions.get(0))
                         .expressions()
                         .stream()
-                        .map(Utilities::asSymbolExpression)
+                        .map(Utilities::asSymbol)
                         .collect(Collectors.toList()),
-                asCombinationExpression(expressions.get(1)).expressions());
+                asCombination(expressions.get(1)).expressions());
     }
 
-    public static Expression makeDefinitionExpression(List<Expression> expressions) {
+    public static Expression makeDefinition(List<Expression> expressions) {
         Expression variable = expressions.get(0);
         if (variable instanceof SymbolExpression) {
             return DefinitionExpression.make(
-                    asSymbolExpression(variable),
+                    asSymbol(variable),
                     expressions.get(1));
         } else if (variable instanceof CombinationExpression) {
             return DefinitionExpression.make(
-                    asSymbolExpression(asCombinationExpression(variable).expressions().get(0)),
+                    asSymbol(asCombination(variable).expressions().get(0)),
                     LambdaExpression.make(
-                            asCombinationExpression(variable)
+                            asCombination(variable)
                                     .expressions()
                                     .stream()
                                     .skip(1)
-                                    .map(Utilities::asSymbolExpression)
+                                    .map(Utilities::asSymbol)
                                     .collect(Collectors.toList()),
-                            asCombinationExpression(expressions.get(1)).expressions()));
+                            asCombination(expressions.get(1)).expressions()));
         }
 
         throw new RuntimeException("Malformed definition");
     }
 
-    public static Expression makeAssignmentExpression(List<Expression> expressions) {
-        return AssignmentExpression.make(asSymbolExpression(expressions.get(0)), expressions.get(1));
+    public static Expression makeAssignment(List<Expression> expressions) {
+        return AssignmentExpression.make(asSymbol(expressions.get(0)), expressions.get(1));
     }
 
     public static Expression makeIfExpression(List<Expression> expressions) {

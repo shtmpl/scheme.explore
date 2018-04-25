@@ -130,6 +130,9 @@ public final class Core {
             });
 
 
+    public static final Procedure IS_NUMBER = PrimitiveProcedure.make(
+            (CombinationExpression arguments) -> Utilities.isNumber(arguments.expressions().get(0)) ? TRUE : FALSE);
+
     private static Number unwrapNumber(Expression expression) {
         if (expression instanceof IntegralExpression) {
             return ((IntegralExpression) expression).value();
@@ -287,6 +290,9 @@ public final class Core {
     public static final Procedure SQRT = PrimitiveProcedure.make(
             (CombinationExpression arguments) -> sqrt(arguments.expressions().get(0)));
 
+
+    public static final Procedure IS_STRING = PrimitiveProcedure.make(
+            (CombinationExpression arguments) -> Utilities.isString(arguments.expressions().get(0)) ? TRUE : FALSE);
 
     public static final Procedure DISPLAY = PrimitiveProcedure.make(
             (CombinationExpression arguments) -> {

@@ -32,6 +32,8 @@ public class DefaultEnvironment implements Environment {
 
         PRIMITIVES.put(SymbolExpression.make("eq?"), Core.IS_EQ);
 
+        PRIMITIVES.put(SymbolExpression.make("number?"), Core.IS_NUMBER);
+
         PRIMITIVES.put(SymbolExpression.make("<"), Core.LESS_THAN);
         PRIMITIVES.put(SymbolExpression.make("<="), Core.LESS_THAN_OR_EQUAL_TO);
         PRIMITIVES.put(SymbolExpression.make("="), Core.EQUAL_TO);
@@ -44,6 +46,8 @@ public class DefaultEnvironment implements Environment {
         PRIMITIVES.put(SymbolExpression.make("/"), Core.DIVIDE);
 
         PRIMITIVES.put(SymbolExpression.make("sqrt"), Core.SQRT);
+
+        PRIMITIVES.put(SymbolExpression.make("string?"), Core.IS_STRING);
 
         PRIMITIVES.put(SymbolExpression.make("display"), Core.DISPLAY);
         PRIMITIVES.put(SymbolExpression.make("newline"), Core.NEWLINE);

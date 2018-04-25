@@ -59,6 +59,15 @@ public final class Utilities {
         return expression instanceof Pair;
     }
 
+    public static boolean isNumber(Expression expression) {
+        return expression instanceof IntegralExpression || expression instanceof FractionalExpression;
+    }
+
+    public static boolean isString(Expression expression) {
+        return expression instanceof StringExpression;
+    }
+
+
     public static List<Expression> mapEval(List<Expression> expressions, Environment environment) {
         List<Expression> result = new ArrayList<>(expressions.size());
         for (Expression expression : expressions) {

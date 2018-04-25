@@ -40,13 +40,13 @@ public final class Main {
                         System.out.printf("%s%n", evaluated);
                     }
                 } catch (RuntimeException exception) {
-                    System.out.printf("%s%s%n", exception.getMessage());
+                    System.out.printf("%s%n", exception.getMessage());
                 }
             }
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
 
-        System.out.println("Done!");
+//        System.out.println("Done!");
     }
 }

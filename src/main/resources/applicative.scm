@@ -1,8 +1,3 @@
-(define (map f xs)
-  (if (null? xs)
-      '()
-      (cons (f (car xs)) (map f (cdr xs)))))
-
 (define (caar xs) (car (car xs)))
 (define (cadr xs) (car (cdr xs)))
 (define (cdar xs) (cdr (car xs)))
@@ -33,6 +28,11 @@
 (define (cddadr xs) (cdr (cdr (car (cdr xs)))))
 (define (cdddar xs) (cdr (cdr (cdr (car xs)))))
 (define (cddddr xs) (cdr (cdr (cdr (cdr xs)))))
+
+(define (map f xs)
+  (if (null? xs)
+      '()
+      (cons (f (car xs)) (map f (cdr xs)))))
 
 
 
@@ -220,7 +220,8 @@
 
 
 (define (eval exp env)
-  (cond ((self-evaluating? exp) exp)
+  (cond ((null? exp) exp)
+        ((self-evaluating? exp) exp)
         ((variable? exp) (lookup-variable-value exp env))
         ((quoted? exp) (text-of-quotation exp))
         ((assignment? exp) (eval-assignment exp env))
@@ -260,12 +261,12 @@
 
         (list 'null? null?)
 
-        (list 'pair? pair?
+        (list 'pair? pair?)
         (list 'cons cons)
         (list 'car car)
         (list 'cdr cdr)
-        (list 'set-car!)
-        (list 'set-cdr!)
+        (list 'set-car! set-car!)
+        (list 'set-cdr! set-cdr!)
 
         (list 'list? list?)
         (list 'list list)
@@ -292,7 +293,7 @@
         (list 'string? string?)
 
         (list 'display display)
-        (list 'newline newline))))
+        (list 'newline newline)))
 
 (define (primitive-procedure-names)
   (map car primitive-procedures))
@@ -324,12 +325,13 @@
   (display string) (newline))
 
 (define (user-print object)
-  (if (compound-procedure? object)
-      (display (list 'compound-procedure
-                     (procedure-parameters object)
-                     (procedure-body object)
-                     '<procedure-env>))
-      (display object))
+  (cond ((null? object) (display object))
+        ((compound-procedure? object)
+         (display (list 'compound-procedure
+                        (procedure-parameters object)
+                        (procedure-body object)
+                        '<procedure-env>)))
+        (else (display object)))
   (newline))
 
 (define (driver-loop)

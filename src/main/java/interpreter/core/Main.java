@@ -1,4 +1,4 @@
-package program.interpreter.core;
+package interpreter.core;
 
 import scheme.*;
 

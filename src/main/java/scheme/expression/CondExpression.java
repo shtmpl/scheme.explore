@@ -1,6 +1,5 @@
 package scheme.expression;
 
-import scheme.CombinationExpression;
 import scheme.Environment;
 import scheme.Expression;
 import scheme.Strings;

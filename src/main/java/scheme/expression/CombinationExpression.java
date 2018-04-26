@@ -1,6 +1,6 @@
-package scheme;
+package scheme.expression;
 
-import scheme.expression.UnitExpression;
+import scheme.*;
 
 import java.util.*;
 

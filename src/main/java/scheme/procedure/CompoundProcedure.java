@@ -1,6 +1,7 @@
 package scheme.procedure;
 
 import scheme.*;
+import scheme.expression.CombinationExpression;
 import scheme.expression.SymbolExpression;
 
 import java.util.HashMap;

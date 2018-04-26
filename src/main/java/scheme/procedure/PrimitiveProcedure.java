@@ -3,7 +3,7 @@ package scheme.procedure;
 import scheme.Environment;
 import scheme.Expression;
 import scheme.Procedure;
-import scheme.CombinationExpression;
+import scheme.expression.CombinationExpression;
 
 public class PrimitiveProcedure implements Procedure {
     public interface Implementation {

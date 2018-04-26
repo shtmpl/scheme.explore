@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import static java.util.Arrays.asList;
-
 public class LetExpression implements Expression {
     private static <X> List<X> cons(X x, List<X> rest) {
         List<X> result = new LinkedList<>();
